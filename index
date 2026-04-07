@@ -1,0 +1,1792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ACD — Ambient Cognitive Design · Complete Framework</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Manrope:wght@300;400;500;600&display=swap');
+
+/* ═══════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════ */
+:root {
+  --bg:       #F6F3ED;
+  --paper:    #FDFCF8;
+  --ink:      #06060F;
+  --mid:      #6A6560;
+  --faint:    rgba(6,6,15,.32);
+  --border:   rgba(6,6,15,.1);
+  --borders:  rgba(6,6,15,.2);
+
+  --c-1: #C43615;   /* ember — human / leadership */
+  --c-2: #0B5C5C;   /* teal  — framework / science */
+  --c-3: #1A5038;   /* green — user experience */
+  --c-4: #6A2888;   /* violet — design system */
+  --c-5: #8A5808;   /* amber — practitioner */
+  --c-6: #183A60;   /* steel — research */
+  --c-7: #8A2828;   /* dark red — benchmarking */
+
+  --nav-w: 248px;
+  --top-h: 52px;
+  --mob-h: 60px;
+
+  font-size: 15px;
+}
+
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { height:100%; scroll-behavior:smooth; }
+body {
+  font-family: 'Manrope', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  height: 100%;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ═══════════════════════════════════════
+   SHELL LAYOUT
+═══════════════════════════════════════ */
+.top-bar {
+  position: fixed; top:0; left:0; right:0;
+  height: var(--top-h); z-index: 400;
+  background: rgba(6,6,15,.96);
+  backdrop-filter: blur(20px) saturate(160%);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  display: flex; align-items: center; gap: .75rem;
+  padding: 0 1.25rem;
+}
+.tb-brand {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: 1rem; letter-spacing: -.02em;
+  color: #F6F3ED; flex-shrink: 0;
+}
+.tb-brand em { color: var(--c-1); font-style: normal; }
+.tb-sep { width:1px; height:16px; background: rgba(255,255,255,.1); flex-shrink:0; }
+.tb-crumb {
+  flex:1; font-size:.72rem; color:rgba(246,243,237,.35);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;
+}
+.tb-crumb strong { color:rgba(246,243,237,.7); font-weight:500; }
+.tb-actions { display:flex; gap:.4rem; flex-shrink:0; }
+.tb-btn {
+  display:flex; align-items:center; gap:.35rem;
+  padding:.3rem .7rem;
+  font-family:'DM Mono',monospace; font-size:.5rem;
+  letter-spacing:.1em; text-transform:uppercase;
+  color:rgba(246,243,237,.38);
+  background:none; border:1px solid rgba(255,255,255,.1);
+  border-radius:3px; cursor:pointer; transition:all .14s;
+  white-space:nowrap;
+}
+.tb-btn:hover { color:rgba(246,243,237,.8); border-color:rgba(255,255,255,.2); background:rgba(255,255,255,.04); }
+.tb-btn.primary { color:var(--c-1); border-color:rgba(196,54,21,.35); }
+.tb-btn.primary:hover { background:rgba(196,54,21,.08); }
+.mob-menu {
+  display:none; width:34px; height:34px; align-items:center; justify-content:center;
+  background:none; border:1px solid rgba(255,255,255,.12); border-radius:3px;
+  cursor:pointer; color:rgba(246,243,237,.5); flex-shrink:0;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  position:fixed; top:var(--top-h); bottom:0; left:0;
+  width:var(--nav-w);
+  background:#08080F;
+  border-right:1px solid rgba(255,255,255,.07);
+  display:flex; flex-direction:column; z-index:300;
+  transition:transform .28s cubic-bezier(.4,0,.2,1);
+}
+.sidebar-scroll {
+  flex:1; overflow-y:auto; padding:.75rem 0;
+  scrollbar-width:none;
+}
+.sidebar-scroll::-webkit-scrollbar { display:none; }
+.nav-group-label {
+  font-family:'DM Mono',monospace; font-size:.46rem;
+  letter-spacing:.2em; text-transform:uppercase;
+  color:rgba(246,243,237,.18); padding:.9rem 1.1rem .3rem;
+}
+.nav-btn {
+  display:block; width:100%; text-align:left;
+  background:none; border:none; cursor:pointer;
+  padding:0; transition:background .12s;
+}
+.nav-btn-inner {
+  display:flex; align-items:center; gap:.6rem;
+  padding:.55rem 1.1rem .55rem .9rem;
+  border-left:2px solid transparent;
+  transition:border-color .12s;
+}
+.nav-btn:hover .nav-btn-inner { background:rgba(255,255,255,.04); }
+.nav-btn.active .nav-btn-inner {
+  background:rgba(255,255,255,.07);
+}
+.nav-num {
+  font-family:'DM Mono',monospace; font-size:.58rem;
+  font-weight:500; width:20px; text-align:center; flex-shrink:0;
+}
+.nav-text { flex:1; min-width:0; }
+.nav-title {
+  font-size:.78rem; font-weight:500;
+  color:rgba(246,243,237,.38); line-height:1.2;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.nav-btn.active .nav-title { color:rgba(246,243,237,.88); }
+.nav-btn:hover:not(.active) .nav-title { color:rgba(246,243,237,.6); }
+.nav-sub {
+  font-size:.65rem; font-weight:300; color:rgba(246,243,237,.2);
+  margin-top:.1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.sidebar-footer {
+  padding:.9rem 1.1rem;
+  border-top:1px solid rgba(255,255,255,.07);
+  flex-shrink:0;
+}
+.sidebar-footer-text {
+  font-family:'DM Mono',monospace; font-size:.44rem;
+  letter-spacing:.1em; text-transform:uppercase;
+  color:rgba(246,243,237,.2); line-height:2;
+}
+.sidebar-footer-text b { color:rgba(246,243,237,.35); font-weight:400; }
+
+/* ── CONTENT AREA ── */
+.content-area {
+  position:fixed;
+  top:var(--top-h); bottom:0;
+  left:var(--nav-w); right:0;
+  overflow:hidden;
+}
+.chapter {
+  position:absolute; inset:0;
+  overflow-y:auto; overflow-x:hidden;
+  display:none;
+  scrollbar-width:thin; scrollbar-color:rgba(6,6,15,.15) transparent;
+}
+.chapter::-webkit-scrollbar { width:4px; }
+.chapter::-webkit-scrollbar-thumb { background:rgba(6,6,15,.15); border-radius:2px; }
+.chapter.active {
+  display:block;
+  animation:fadeUp .22s ease forwards;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(6px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── MOBILE BOTTOM NAV ── */
+.mob-nav {
+  display:none; position:fixed; bottom:0; left:0; right:0;
+  height:var(--mob-h); z-index:400;
+  background:rgba(6,6,15,.97);
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.mob-nav-inner {
+  display:flex; height:100%; overflow-x:auto; scrollbar-width:none;
+}
+.mob-nav-inner::-webkit-scrollbar { display:none; }
+.mob-tab {
+  flex-shrink:0; min-width:52px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:.15rem; padding:0 .8rem;
+  background:none; border:none; border-top:2px solid transparent;
+  cursor:pointer; transition:all .14s;
+}
+.mob-tab.active { border-top-color:var(--c-1); }
+.mob-tab-num {
+  font-family:'DM Mono',monospace; font-size:.52rem; font-weight:500;
+  color:rgba(246,243,237,.28); transition:color .14s;
+}
+.mob-tab.active .mob-tab-num { color:var(--c-1); }
+.mob-tab-lbl {
+  font-size:.54rem; font-weight:500; color:rgba(246,243,237,.28);
+  white-space:nowrap; transition:color .14s;
+}
+.mob-tab.active .mob-tab-lbl { color:rgba(246,243,237,.8); }
+
+/* ═══════════════════════════════════════
+   SHARED CONTENT STYLES
+═══════════════════════════════════════ */
+.ch-inner { max-width:940px; margin:0 auto; padding:3rem 2.5rem 5rem; }
+
+/* Chapter header */
+.ch-header {
+  padding:3rem 2.5rem 2rem;
+  border-bottom:1px solid var(--border);
+  max-width:940px; margin:0 auto;
+}
+.ch-eyebrow {
+  font-family:'DM Mono',monospace; font-size:.52rem;
+  letter-spacing:.22em; text-transform:uppercase;
+  margin-bottom:.75rem;
+}
+.ch-title {
+  font-family:'Syne',sans-serif; font-weight:800;
+  font-size:clamp(2rem,4vw,3.2rem); line-height:.97;
+  letter-spacing:-.025em; margin-bottom:.85rem;
+}
+.ch-title em {
+  font-family:'Instrument Serif',serif;
+  font-style:italic; font-weight:400; color:var(--c-1);
+}
+.ch-lead {
+  font-size:.96rem; font-weight:300; color:var(--mid);
+  max-width:720px; line-height:1.82;
+}
+
+/* Section dividers */
+.s-title {
+  font-family:'Syne',sans-serif; font-weight:700;
+  font-size:1rem; letter-spacing:-.01em;
+  margin:2.5rem 0 .5rem;
+}
+.s-lead {
+  font-size:.88rem; font-weight:300; color:var(--mid);
+  line-height:1.78; max-width:700px; margin-bottom:1.5rem;
+}
+
+/* Pull quote */
+.pq {
+  border-left:3px solid var(--c-1);
+  padding:1.25rem 1.75rem;
+  background:var(--ink);
+  margin:2rem 0;
+}
+.pq p {
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(.95rem,1.8vw,1.25rem);
+  font-style:italic; color:rgba(246,243,237,.82); line-height:1.58;
+}
+.pq cite {
+  display:block; font-family:'DM Mono',monospace;
+  font-size:.48rem; letter-spacing:.14em; font-style:normal;
+  color:rgba(246,243,237,.25); text-transform:uppercase; margin-top:.65rem;
+}
+
+/* Grid layouts */
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem; }
+.g3 { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; }
+.g4 { display:grid; grid-template-columns:repeat(4,1fr); gap:.75rem; margin-bottom:1.5rem; }
+
+/* Cards */
+.card {
+  background:var(--paper); border:1px solid var(--border);
+  border-radius:6px; padding:1.5rem; position:relative;
+}
+.card-eyebrow {
+  font-family:'DM Mono',monospace; font-size:.48rem;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:var(--mid); margin-bottom:.4rem;
+}
+.card-title {
+  font-family:'Syne',sans-serif; font-weight:700;
+  font-size:.88rem; letter-spacing:-.01em; margin-bottom:.4rem;
+}
+.card-body {
+  font-size:.82rem; font-weight:300; color:var(--mid); line-height:1.7;
+}
+.card-body strong { color:var(--ink); font-weight:500; }
+.card.accent-top::before {
+  content:''; position:absolute; top:0; left:0; right:0;
+  height:3px; border-radius:6px 6px 0 0;
+}
+
+/* Stat blocks */
+.stat-row { display:flex; gap:1.5rem; flex-wrap:wrap; margin-bottom:2rem; }
+.stat {
+  background:var(--paper); border:1px solid var(--border);
+  border-radius:6px; padding:1.25rem 1.5rem; flex:1; min-width:120px;
+}
+.stat-val {
+  font-family:'Syne',sans-serif; font-weight:800;
+  font-size:2rem; line-height:1; letter-spacing:-.03em; margin-bottom:.25rem;
+}
+.stat-label {
+  font-family:'DM Mono',monospace; font-size:.46rem;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--mid);
+  line-height:1.6;
+}
+
+/* Tables */
+.data-table {
+  width:100%; border-collapse:collapse;
+  font-size:.82rem; margin-bottom:1.5rem;
+}
+.data-table th {
+  text-align:left; padding:.6rem .85rem;
+  font-family:'DM Mono',monospace; font-size:.48rem;
+  letter-spacing:.16em; text-transform:uppercase;
+  background:var(--ink); color:rgba(246,243,237,.35); font-weight:400;
+}
+.data-table td {
+  padding:.75rem .85rem; border-bottom:1px solid var(--border);
+  vertical-align:top; line-height:1.5; color:var(--mid);
+}
+.data-table td:first-child { color:var(--ink); font-weight:500; }
+.data-table tr:hover td { background:rgba(6,6,15,.025); }
+.data-table .yes { color:var(--c-3); font-weight:500; }
+.data-table .no { color:rgba(6,6,15,.25); font-style:italic; }
+.data-table .partial { color:var(--c-5); }
+.data-table .hero-row td { background:rgba(196,54,21,.04); }
+.data-table .hero-row td:first-child { color:var(--c-1); font-weight:600; }
+
+/* Note box */
+.note {
+  background:var(--paper); border:1px solid var(--border);
+  border-left:3px solid var(--c-1);
+  border-radius:0 4px 4px 0; padding:1rem 1.5rem; margin:1.5rem 0;
+}
+.note p { font-size:.86rem; line-height:1.72; color:var(--ink); }
+.note p strong { font-weight:500; }
+
+/* Horizontal rule */
+.hr { height:1px; background:var(--border); margin:2rem 0; }
+
+/* Flow steps */
+.flow {
+  display:flex; align-items:stretch; gap:0;
+  border:1px solid var(--border); border-radius:6px;
+  overflow:hidden; margin-bottom:1.5rem;
+}
+.flow-step {
+  flex:1; padding:1.25rem 1rem; background:var(--paper);
+  border-right:1px solid var(--border); position:relative;
+}
+.flow-step:last-child { border-right:none; }
+.flow-step-num {
+  font-family:'DM Mono',monospace; font-size:.48rem;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--mid);
+  margin-bottom:.3rem;
+}
+.flow-step-title {
+  font-family:'Syne',sans-serif; font-weight:600;
+  font-size:.78rem; margin-bottom:.3rem; letter-spacing:-.005em;
+}
+.flow-step-body {
+  font-size:.75rem; font-weight:300; color:var(--mid); line-height:1.55;
+}
+
+/* Gradient accent bar at top of chapter */
+.ch-accent { height:3px; width:100%; }
+
+/* Tag pills */
+.tag {
+  display:inline-block; padding:.18rem .55rem;
+  font-family:'DM Mono',monospace; font-size:.46rem;
+  letter-spacing:.1em; text-transform:uppercase;
+  border-radius:2px; border:1px solid; margin:.15rem .1rem;
+}
+
+/* Interactive element base */
+.interactive {
+  background:var(--ink); border-radius:8px;
+  padding:1.75rem; margin:1.5rem 0;
+}
+.int-label {
+  font-family:'DM Mono',monospace; font-size:.5rem;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:rgba(246,243,237,.28); margin-bottom:1rem;
+}
+.int-control {
+  display:flex; align-items:center; gap:.75rem; margin-bottom:.75rem; flex-wrap:wrap;
+}
+.int-control label {
+  font-family:'DM Mono',monospace; font-size:.5rem;
+  letter-spacing:.12em; text-transform:uppercase;
+  color:rgba(246,243,237,.38); min-width:110px;
+}
+.int-control input[type=range] { flex:1; min-width:100px; accent-color:var(--c-1); }
+.int-control output { font-family:'Syne',sans-serif; font-weight:700; font-size:.82rem; color:#F6F3ED; min-width:48px; }
+.int-control select {
+  flex:1; font-family:'DM Mono',monospace; font-size:.56rem; padding:.35rem .7rem;
+  background:rgba(246,243,237,.06); border:1px solid rgba(246,243,237,.14);
+  color:#F6F3ED; border-radius:3px; cursor:pointer;
+}
+.int-result {
+  padding:1rem 1.25rem; border-radius:4px; border:1px solid rgba(246,243,237,.1);
+  font-size:.82rem; color:rgba(246,243,237,.72); line-height:1.65;
+  transition:all .3s; background:rgba(246,243,237,.04);
+}
+
+/* HUD mockup */
+.hud-frame {
+  background:#07080F; border-radius:10px; overflow:hidden;
+  margin-bottom:1.5rem; border:1px solid rgba(255,255,255,.08);
+}
+.hud-bar {
+  display:flex; align-items:center; padding:.6rem 1rem;
+  border-bottom:1px solid rgba(255,255,255,.07); gap:.6rem;
+}
+.hud-dot { width:7px; height:7px; border-radius:50%; }
+.hud-bar-label {
+  font-family:'DM Mono',monospace; font-size:.48rem;
+  letter-spacing:.14em; text-transform:uppercase; color:rgba(246,243,237,.28);
+}
+.hud-bar-status {
+  margin-left:auto; font-family:'DM Mono',monospace;
+  font-size:.46rem; letter-spacing:.1em; text-transform:uppercase; color:var(--c-1);
+}
+.hud-scene {
+  min-height:320px; background:linear-gradient(180deg,#09101A 0%,#141F2E 100%);
+  position:relative; overflow:hidden;
+}
+.hud-overlay { position:absolute; inset:0; }
+.hud-notif {
+  position:absolute; border-radius:6px; padding:.65rem .9rem;
+  backdrop-filter:blur(10px);
+  background:rgba(7,8,15,.85); border:1px solid;
+}
+.hud-notif-tag {
+  font-family:'DM Mono',monospace; font-size:.42rem; letter-spacing:.12em;
+  text-transform:uppercase; margin-bottom:.25rem;
+}
+.hud-notif-text { font-size:.7rem; color:rgba(246,243,237,.85); line-height:1.4; }
+.hud-confirm-btns {
+  display:flex; gap:.35rem; margin-top:.5rem;
+}
+.hud-cbtn {
+  font-family:'DM Mono',monospace; font-size:.44rem; letter-spacing:.08em;
+  text-transform:uppercase; padding:.25rem .65rem;
+  border-radius:3px; border:1px solid; cursor:pointer;
+}
+.hud-bldg {
+  position:absolute; bottom:30%; background:#0A1220;
+}
+/* Score ring */
+.score-ring-row { display:flex; gap:.75rem; align-items:center; flex-wrap:wrap; }
+.score-ring-item { text-align:center; }
+.score-ring-val { font-family:'Syne',sans-serif; font-weight:700; font-size:.82rem; margin-top:.2rem; }
+.score-ring-lbl { font-family:'DM Mono',monospace; font-size:.42rem; letter-spacing:.1em; text-transform:uppercase; color:var(--mid); }
+
+/* Checklist */
+.checklist { display:flex; flex-direction:column; gap:0; margin-bottom:1.5rem; }
+.check-item {
+  display:flex; align-items:flex-start; gap:.75rem;
+  padding:.7rem 0; border-bottom:1px solid var(--border);
+  cursor:pointer;
+}
+.check-item:last-child { border-bottom:none; }
+.check-box {
+  width:18px; height:18px; border-radius:3px; border:1.5px solid var(--borders);
+  flex-shrink:0; margin-top:.1rem; display:flex; align-items:center; justify-content:center;
+  transition:all .14s; background:white;
+}
+.check-item.done .check-box {
+  background:var(--c-3); border-color:var(--c-3); color:white;
+}
+.check-text { font-size:.84rem; font-weight:300; line-height:1.55; }
+.check-text strong { font-weight:500; color:var(--ink); }
+.check-item.done .check-text { color:var(--mid); text-decoration:line-through; }
+.check-stage {
+  font-family:'DM Mono',monospace; font-size:.46rem;
+  letter-spacing:.1em; text-transform:uppercase;
+  margin-left:auto; flex-shrink:0; padding:.1rem .4rem;
+  border-radius:2px; background:rgba(6,6,15,.06); color:var(--mid);
+}
+
+/* Progress ring SVG */
+.prog-rings { display:flex; gap:1.5rem; flex-wrap:wrap; margin:1rem 0; }
+.prog-ring-wrap { text-align:center; }
+
+/* Cover chapter styles */
+.cover-ch {
+  background:var(--ink);
+  min-height:calc(100vh - var(--top-h));
+  display:flex; flex-direction:column; justify-content:flex-end;
+  padding:4rem 3rem 4rem;
+  position:relative; overflow:hidden;
+}
+.cover-grid {
+  position:absolute; inset:0;
+  background-image: linear-gradient(rgba(246,243,237,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(246,243,237,.03) 1px,transparent 1px);
+  background-size:44px 44px;
+  pointer-events:none;
+}
+.cover-glow {
+  position:absolute; width:500px; height:500px; border-radius:50%;
+  background:radial-gradient(circle,rgba(196,54,21,.14) 0%,transparent 70%);
+  top:-100px; right:-80px; pointer-events:none;
+}
+.cover-spectrum {
+  position:absolute; bottom:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg,
+    var(--c-1) 0% 14.2%, var(--c-2) 14.2% 28.5%,
+    var(--c-7) 28.5% 42.8%, var(--c-3) 42.8% 57.1%,
+    var(--c-4) 57.1% 71.4%, var(--c-5) 71.4% 85.7%, var(--c-6) 85.7%);
+}
+.cover-tag {
+  font-family:'DM Mono',monospace; font-size:.52rem; letter-spacing:.22em;
+  text-transform:uppercase; color:rgba(246,243,237,.28); margin-bottom:1.5rem;
+  position:relative; z-index:2;
+}
+.cover-h {
+  font-family:'Syne',sans-serif; font-weight:800;
+  font-size:clamp(3rem,7vw,6.5rem); line-height:.93;
+  letter-spacing:-.03em; color:#F6F3ED;
+  margin-bottom:.8rem; position:relative; z-index:2;
+}
+.cover-h em {
+  font-family:'Instrument Serif',serif; font-style:italic;
+  font-weight:400; color:var(--c-1);
+}
+.cover-sub {
+  font-family:'Instrument Serif',serif; font-size:clamp(1rem,2.2vw,1.5rem);
+  font-style:italic; font-weight:400;
+  color:rgba(246,243,237,.42); max-width:680px; line-height:1.5;
+  margin-bottom:2.5rem; position:relative; z-index:2;
+}
+.cover-meta {
+  display:flex; gap:2.5rem; flex-wrap:wrap;
+  position:relative; z-index:2;
+}
+.cm-item {}
+.cm-label {
+  font-family:'DM Mono',monospace; font-size:.46rem; letter-spacing:.18em;
+  text-transform:uppercase; color:rgba(246,243,237,.2); margin-bottom:.2rem;
+}
+.cm-val { font-size:.8rem; font-weight:300; color:rgba(246,243,237,.55); }
+.cover-cta {
+  display:inline-flex; align-items:center; gap:.5rem; margin-top:2rem;
+  padding:.5rem 1.25rem;
+  font-family:'DM Mono',monospace; font-size:.54rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--c-1); border:1px solid rgba(196,54,21,.4); border-radius:3px;
+  background:none; cursor:pointer; transition:all .15s; position:relative; z-index:2;
+}
+.cover-cta:hover { background:rgba(196,54,21,.08); border-color:rgba(196,54,21,.6); }
+.cover-stats {
+  display:flex; gap:2rem; flex-wrap:wrap; margin-bottom:2.5rem;
+  position:relative; z-index:2;
+}
+.cs-item {}
+.cs-val {
+  font-family:'Syne',sans-serif; font-weight:800;
+  font-size:2rem; line-height:1; letter-spacing:-.03em; color:#F6F3ED;
+}
+.cs-val sup { font-size:.5em; vertical-align:super; font-weight:500; }
+.cs-label {
+  font-family:'DM Mono',monospace; font-size:.44rem; letter-spacing:.14em;
+  text-transform:uppercase; color:rgba(246,243,237,.28); margin-top:.15rem;
+}
+
+/* Impact table */
+.impact-split {
+  display:grid; grid-template-columns:1fr 1fr; gap:1px;
+  background:var(--border); border:1px solid var(--border);
+  border-radius:6px; overflow:hidden; margin-bottom:1.5rem;
+}
+.impact-col { background:var(--paper); }
+.impact-col-head {
+  padding:.75rem 1.25rem;
+  font-family:'DM Mono',monospace; font-size:.5rem;
+  letter-spacing:.16em; text-transform:uppercase; font-weight:500;
+  border-bottom:1px solid var(--border);
+}
+.ic-without .impact-col-head { background:rgba(196,54,21,.05); color:var(--c-1); }
+.ic-with .impact-col-head { background:rgba(26,80,56,.05); color:var(--c-3); }
+.impact-rows { padding:.75rem 1.25rem; display:flex; flex-direction:column; gap:.6rem; }
+.ir {
+  display:flex; justify-content:space-between; align-items:baseline;
+  padding:.5rem 0; border-bottom:1px solid var(--border); gap:.5rem;
+}
+.ir:last-child { border-bottom:none; }
+.ir-label { font-size:.8rem; font-weight:300; color:var(--mid); flex:1; }
+.ir-val { font-family:'Syne',sans-serif; font-weight:700; font-size:.95rem; flex-shrink:0; }
+.ic-without .ir-val { color:var(--c-1); }
+.ic-with .ir-val { color:var(--c-3); }
+
+/* CPP grid */
+.cpp-grid {
+  display:grid; grid-template-columns:160px 1fr 1fr 1fr;
+  gap:1px; background:var(--border); border:1px solid var(--border);
+  border-radius:6px; overflow:hidden; margin-bottom:1.5rem;
+}
+.cpp-hd {
+  background:var(--ink); padding:.65rem .85rem;
+  font-family:'DM Mono',monospace; font-size:.46rem;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:rgba(246,243,237,.32); font-weight:400;
+}
+.cpp-dim {
+  background:var(--paper); padding:.9rem .85rem;
+}
+.cpp-dim-name {
+  font-family:'Syne',sans-serif; font-weight:600;
+  font-size:.78rem; letter-spacing:-.005em; margin-bottom:.15rem;
+}
+.cpp-dim-desc { font-size:.72rem; font-weight:300; color:var(--mid); line-height:1.5; }
+.cpp-val { background:var(--paper); padding:.9rem .85rem; }
+.cpp-val-label {
+  font-family:'DM Mono',monospace; font-size:.44rem;
+  letter-spacing:.12em; text-transform:uppercase; margin-bottom:.3rem;
+}
+.cpp-val-text { font-size:.74rem; font-weight:300; color:var(--mid); line-height:1.5; }
+.cpp-val-text strong { color:var(--ink); font-weight:500; }
+
+/* Modality table enhanced */
+.mod-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:.75rem; margin-bottom:1.5rem;
+}
+.mod-card {
+  background:var(--paper); border:1px solid var(--border);
+  border-radius:6px; overflow:hidden;
+}
+.mod-card-top { padding:1rem; }
+.mod-name { font-family:'Syne',sans-serif; font-weight:700; font-size:.82rem; margin-bottom:.1rem; }
+.mod-surface { font-size:.7rem; font-weight:300; color:var(--mid); margin-bottom:.75rem; }
+.mod-badges { display:flex; flex-wrap:wrap; gap:.25rem; }
+.mod-body { padding:.75rem 1rem; border-top:1px solid var(--border); }
+.mod-row {
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-size:.74rem; margin-bottom:.3rem;
+}
+.mod-row .k { color:var(--mid); font-size:.7rem; }
+.mod-row .v { font-family:'DM Mono',monospace; font-size:.54rem; letter-spacing:.06em; }
+
+/* Scenario switcher */
+.scenario-tabs {
+  display:flex; gap:0; border:1px solid var(--border); border-radius:6px;
+  overflow:hidden; margin-bottom:1rem; background:var(--paper);
+}
+.scen-tab {
+  flex:1; padding:.55rem .75rem; text-align:center;
+  font-family:'DM Mono',monospace; font-size:.48rem;
+  letter-spacing:.1em; text-transform:uppercase;
+  background:none; border:none; border-right:1px solid var(--border);
+  cursor:pointer; color:var(--mid); transition:all .14s;
+}
+.scen-tab:last-child { border-right:none; }
+.scen-tab.on { background:var(--ink); color:#F6F3ED; }
+.scen-content { display:none; }
+.scen-content.on { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+
+/* Research hypothesis cards */
+.hyp-card {
+  background:var(--paper); border:1px solid var(--border);
+  border-radius:6px; padding:1.5rem; margin-bottom:.75rem;
+}
+.hyp-id {
+  font-family:'DM Mono',monospace; font-size:.52rem;
+  letter-spacing:.14em; text-transform:uppercase; margin-bottom:.5rem;
+}
+.hyp-title {
+  font-family:'Syne',sans-serif; font-weight:700;
+  font-size:.9rem; letter-spacing:-.01em; margin-bottom:.5rem;
+}
+.hyp-statement {
+  font-family:'Instrument Serif',serif; font-style:italic;
+  font-size:.92rem; color:var(--mid); line-height:1.6; margin-bottom:.75rem;
+}
+.hyp-falsifiable {
+  font-size:.78rem; font-weight:300; color:var(--mid); line-height:1.6;
+}
+.hyp-falsifiable strong { color:var(--ink); font-weight:500; }
+
+/* Progress bar for checklist */
+.progress-wrap { margin-bottom:1.5rem; }
+.progress-bar-bg {
+  height:6px; background:var(--border); border-radius:3px; overflow:hidden; margin-bottom:.4rem;
+}
+.progress-bar-fill {
+  height:100%; background:var(--c-3); border-radius:3px; transition:width .4s;
+}
+.progress-label {
+  font-family:'DM Mono',monospace; font-size:.5rem;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--mid);
+}
+
+/* Token swatches */
+.token-row {
+  display:flex; align-items:center; gap:.75rem; padding:.65rem 0;
+  border-bottom:1px solid var(--border);
+}
+.token-swatch { width:20px; height:20px; border-radius:4px; flex-shrink:0; border:1px solid var(--border); }
+.token-name { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.08em; color:var(--ink); font-weight:500; min-width:120px; }
+.token-hex { font-family:'DM Mono',monospace; font-size:.54rem; color:var(--mid); min-width:72px; }
+.token-meaning { font-size:.78rem; font-weight:300; color:var(--mid); line-height:1.5; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  :root { --nav-w:0px; --mob-h:60px; }
+  .sidebar { transform:translateX(-248px); width:248px; }
+  .sidebar.open { transform:translateX(0); box-shadow:4px 0 40px rgba(0,0,0,.5); }
+  .content-area { left:0; bottom:var(--mob-h); }
+  .mob-nav { display:block; }
+  .mob-menu { display:flex; }
+  .tb-btn:not(.primary) { display:none; }
+  .ch-inner { padding:2rem 1.25rem 4rem; }
+  .ch-header { padding:2rem 1.25rem 1.5rem; }
+  .g2,.g3,.g4 { grid-template-columns:1fr; }
+  .impact-split { grid-template-columns:1fr; }
+  .cpp-grid { grid-template-columns:1fr; }
+  .scen-content.on { grid-template-columns:1fr; }
+  .cover-ch { padding:2.5rem 1.5rem 3rem; }
+  .cover-stats { gap:1.25rem; }
+  .flow { flex-direction:column; }
+  .stat-row { gap:.75rem; }
+  .stat { min-width:80px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     TOP BAR
+══════════════════════════════════════ -->
+<header class="top-bar">
+  <button class="mob-menu" id="mob-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+    </svg>
+  </button>
+  <div class="tb-brand">ACD<em>.</em></div>
+  <div class="tb-sep"></div>
+  <div class="tb-crumb" id="crumb"><strong>00</strong> — Ambient Cognitive Design</div>
+  <div class="tb-actions">
+    <button class="tb-btn primary" onclick="show(0)">Home</button>
+    <button class="tb-btn" onclick="prev()">
+      <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+      Prev
+    </button>
+    <button class="tb-btn" onclick="next()">
+      Next
+      <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════ -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-scroll">
+    <div class="nav-group-label">ACD Framework</div>
+
+    <button class="nav-btn active" id="nav-0" onclick="show(0)">
+      <div class="nav-btn-inner" style="border-left-color:var(--c-1)">
+        <span class="nav-num" style="color:var(--c-1)">00</span>
+        <div class="nav-text">
+          <div class="nav-title">Overview</div>
+          <div class="nav-sub">The project</div>
+        </div>
+      </div>
+    </button>
+
+    <button class="nav-btn" id="nav-1" onclick="show(1)">
+      <div class="nav-btn-inner" style="border-left-color:var(--c-1)">
+        <span class="nav-num" style="color:var(--c-1)">01</span>
+        <div class="nav-text">
+          <div class="nav-title">The Case</div>
+          <div class="nav-sub">Science · gap · business case</div>
+        </div>
+      </div>
+    </button>
+
+    <button class="nav-btn" id="nav-2" onclick="show(2)">
+      <div class="nav-btn-inner" style="border-left-color:var(--c-2)">
+        <span class="nav-num" style="color:var(--c-2)">02</span>
+        <div class="nav-text">
+          <div class="nav-title">The Framework</div>
+          <div class="nav-sub">AAA · CTS · Kamble's Law</div>
+        </div>
+      </div>
+    </button>
+
+    <button class="nav-btn" id="nav-3" onclick="show(3)">
+      <div class="nav-btn-inner" style="border-left-color:var(--c-7)">
+        <span class="nav-num" style="color:var(--c-7)">03</span>
+        <div class="nav-text">
+          <div class="nav-title">Benchmarking</div>
+          <div class="nav-sub">Industry landscape · the gap</div>
+        </div>
+      </div>
+    </button>
+
+    <button class="nav-btn" id="nav-4" onclick="show(4)">
+      <div class="nav-btn-inner" style="border-left-color:var(--c-3)">
+        <span class="nav-num" style="color:var(--c-3)">04</span>
+        <div class="nav-text">
+          <div class="nav-title">User Experience</div>
+          <div class="nav-sub">Felt states · CTS live view</div>
+        </div>
+      </div>
+    </button>
+
+    <button class="nav-btn" id="nav-5" onclick="show(5)">
+      <div class="nav-btn-inner" style="border-left-color:var(--c-4)">
+        <span class="nav-num" style="color:var(--c-4)">05</span>
+        <div class="nav-text">
+          <div class="nav-title">Design System</div>
+          <div class="nav-sub">Tokens · components · modalities</div>
+        </div>
+      </div>
+    </button>
+
+    <button class="nav-btn" id="nav-6" onclick="show(6)">
+      <div class="nav-btn-inner" style="border-left-color:var(--c-5)">
+        <span class="nav-num" style="color:var(--c-5)">06</span>
+        <div class="nav-text">
+          <div class="nav-title">Practitioner Standard</div>
+          <div class="nav-sub">Checklist · compliance · ACD-B</div>
+        </div>
+      </div>
+    </button>
+
+    <button class="nav-btn" id="nav-7" onclick="show(7)">
+      <div class="nav-btn-inner" style="border-left-color:var(--c-6)">
+        <span class="nav-num" style="color:var(--c-6)">07</span>
+        <div class="nav-text">
+          <div class="nav-title">Research Protocol</div>
+          <div class="nav-sub">H1 · study design · outputs</div>
+        </div>
+      </div>
+    </button>
+  </div>
+  <div class="sidebar-footer">
+    <div class="sidebar-footer-text">
+      <b>Kirti</b> · Head of UI/UX<br>
+      <b>Platform</b> · Jio Tesseract<br>
+      <b>ORCID</b> · 0009-0003-2587-6789<br>
+      <b>DOI</b> · zenodo.org/records/19254628
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     CONTENT AREA
+══════════════════════════════════════ -->
+<main class="content-area">
+
+<!-- ── 00 OVERVIEW ── -->
+<div class="chapter active" id="ch-0">
+  <div class="cover-ch">
+    <div class="cover-grid"></div>
+    <div class="cover-glow"></div>
+    <div class="cover-spectrum"></div>
+    <div class="cover-tag">Ambient Cognitive Design · Complete Framework · Jio Tesseract · 2026</div>
+    <h1 class="cover-h">Ambient<br><em>Cognitive</em><br>Design</h1>
+    <p class="cover-sub">The governance framework for the second mind. The 120-bit human as Governor of the Teraflop machine.</p>
+    <div class="cover-stats">
+      <div class="cs-item"><div class="cs-val">10<sup>13</sup></div><div class="cs-label">Cognitive gap<br>orders of magnitude</div></div>
+      <div class="cs-item"><div class="cs-val">120</div><div class="cs-label">Human channel<br>bits per second</div></div>
+      <div class="cs-item"><div class="cs-val">276×</div><div class="cs-label">3-year ROI<br>conservative</div></div>
+      <div class="cs-item"><div class="cs-val">500M+</div><div class="cs-label">JioFrames<br>user opportunity</div></div>
+      <div class="cs-item"><div class="cs-val">8</div><div class="cs-label">Chapters<br>this document</div></div>
+    </div>
+    <div class="cover-meta">
+      <div class="cm-item"><div class="cm-label">Author</div><div class="cm-val">Kirti · Head of UI/UX · Jio Tesseract</div></div>
+      <div class="cm-item"><div class="cm-label">Platform</div><div class="cm-val">JioFrames · Jio Enterprise AI · Jio Platforms</div></div>
+      <div class="cm-item"><div class="cm-label">Published</div><div class="cm-val">Zenodo · ORCID 0009-0003-2587-6789</div></div>
+      <div class="cm-item"><div class="cm-label">Submission</div><div class="cm-val">ACM SIGCHI · IEEE XR WG · ISO/IEC JTC1 SC42</div></div>
+    </div>
+    <button class="cover-cta" onclick="show(1)">
+      Begin reading
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+    </button>
+  </div>
+
+  <div class="ch-inner">
+    <div class="s-title" style="margin-top:0;">What is in this document</div>
+    <div class="s-lead">Eight chapters, one argument. Read in sequence or navigate to any chapter. Each chapter assumes the prior ones. No concept is repeated.</div>
+    <div class="g2">
+      <div class="card" onclick="show(1)" style="cursor:pointer;border-left:3px solid var(--c-1)">
+        <div class="card-eyebrow" style="color:var(--c-1)">01 · The Case</div>
+        <div class="card-title">Why ACD is structurally necessary</div>
+        <div class="card-body">The scientific foundation. The cognitive gap. The business case. The asks. For Jio leadership and Head of Product.</div>
+      </div>
+      <div class="card" onclick="show(2)" style="cursor:pointer;border-left:3px solid var(--c-2)">
+        <div class="card-eyebrow" style="color:var(--c-2)">02 · The Framework</div>
+        <div class="card-title">ACD explained once, completely</div>
+        <div class="card-body">The AAA Matrix. CTS. Cognitive Mediation Gradient. Kamble's Law. The Proportionality Principle. The step-down transformer.</div>
+      </div>
+      <div class="card" onclick="show(3)" style="cursor:pointer;border-left:3px solid var(--c-7)">
+        <div class="card-eyebrow" style="color:var(--c-7)">03 · Benchmarking</div>
+        <div class="card-title">Every company. Every framework. The gap.</div>
+        <div class="card-body">Meta, Apple, Google, Microsoft, Amazon, Snap. What they have, what they're missing, and why ACD is in a category of one.</div>
+      </div>
+      <div class="card" onclick="show(4)" style="cursor:pointer;border-left:3px solid var(--c-3)">
+        <div class="card-eyebrow" style="color:var(--c-3)">04 · User Experience</div>
+        <div class="card-title">What ACD feels like in the real world</div>
+        <div class="card-body">The JioFrames HUD. The CTS Dashboard. Five scenarios. The five felt states. The cognitive dividend.</div>
+      </div>
+      <div class="card" onclick="show(5)" style="cursor:pointer;border-left:3px solid var(--c-4)">
+        <div class="card-eyebrow" style="color:var(--c-4)">05 · Design System</div>
+        <div class="card-title">The cognitive design language</div>
+        <div class="card-body">Cognitive tokens. Attention budget. Input modalities. AAA components. Trust signals. Cognitive Personality Profiles.</div>
+      </div>
+      <div class="card" onclick="show(6)" style="cursor:pointer;border-left:3px solid var(--c-5)">
+        <div class="card-eyebrow" style="color:var(--c-5)">06 · Practitioner Standard</div>
+        <div class="card-title">Deploy Monday morning</div>
+        <div class="card-body">42-item checklist. 30-criterion compliance test. Design Gate. ACD-B certification. Everything needed to ship.</div>
+      </div>
+      <div class="card" onclick="show(7)" style="cursor:pointer;border-left:3px solid var(--c-6)">
+        <div class="card-eyebrow" style="color:var(--c-6)">07 · Research Protocol</div>
+        <div class="card-title">H1 — The empirical foundation</div>
+        <div class="card-body">Three falsifiable hypotheses. 2,400 participants. 18-month JioFrames study. Measurement instruments. ACD-B certification protocol.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 01 THE CASE ── -->
+<div class="chapter" id="ch-1">
+  <div class="ch-accent" style="background:var(--c-1)"></div>
+  <div class="ch-header">
+    <div class="ch-eyebrow" style="color:var(--c-1)">01 · The Case for ACD</div>
+    <h2 class="ch-title">The 120-bit human.<br>The <em>teraflop machine.</em><br>The governance gap.</h2>
+    <p class="ch-lead">Human conscious thought operates at 10–120 bits per second. A single GPT-4 inference requires 560 trillion floating-point operations. The gap is 10¹³ orders of magnitude and it widens every 18 months. No existing framework addresses it. This is the structural necessity of ACD.</p>
+  </div>
+  <div class="ch-inner">
+
+    <div class="stat-row">
+      <div class="stat"><div class="stat-val" style="color:var(--c-1)">10<sup style="font-size:.5em">–12</sup></div><div class="stat-label">bits/sec<br>human deliberate thought<br>Caltech 2024 · fixed 300K years</div></div>
+      <div class="stat"><div class="stat-val" style="color:var(--c-2)">560TF</div><div class="stat-label">FLOPs per<br>GPT-4 inference<br>= 1,750 years of human thought</div></div>
+      <div class="stat"><div class="stat-val" style="color:var(--c-5)">10<sup style="font-size:.5em">13</sup></div><div class="stat-label">orders of magnitude<br>machine over human<br>doubles every 18 months</div></div>
+      <div class="stat"><div class="stat-val" style="color:var(--c-7)">0</div><div class="stat-label">governance frameworks<br>addressing this gap<br>ACD is the first</div></div>
+    </div>
+
+    <div class="pq">
+      <p>"When a decision is made in a channel the human cannot access — because it occurs at a processing speed and data volume that exceeds the human's conscious bandwidth by twelve orders of magnitude — that decision is not authored by the human, regardless of whether it nominally serves the human's goals. This is the governance failure that only ACD addresses."</p>
+      <cite>ACD Governance Framework · Kirti · Zenodo · 2026</cite>
+    </div>
+
+    <div class="s-title">ACD as a step-down transformer</div>
+    <div class="s-lead">In electrical engineering, a step-down transformer converts high-voltage transmission power into stable household current. It does not reduce the power — it makes the power usable. ACD is the cognitive equivalent: it converts teraflop-scale AI processing into the form a 120-bit human can receive, author, and govern.</div>
+
+    <div class="flow">
+      <div class="flow-step"><div class="flow-step-num">AI computation</div><div class="flow-step-title">560 TeraFLOPs</div><div class="flow-step-body">High-voltage transmission. Enormous power. Not directly governable by the 120-bit human channel.</div></div>
+      <div class="flow-step"><div class="flow-step-num">AAA Protocol</div><div class="flow-step-title">Compression algorithm</div><div class="flow-step-body">Classifies every AI action by Agency, Authorship, Autonomy. Compresses teraflop conclusions into 120-bit disclosures.</div></div>
+      <div class="flow-step"><div class="flow-step-num">CTS Readout</div><div class="flow-step-title">The voltage display</div><div class="flow-step-body">Shows what was processed, what was offloaded, what remains the human's. Enables override at any moment.</div></div>
+      <div class="flow-step"><div class="flow-step-num">Human channel</div><div class="flow-step-title">10–120 bits/sec</div><div class="flow-step-body">Authors intent. Governs all AI action. Retains full override authority. Always and irreversibly the Governor.</div></div>
+    </div>
+
+    <div class="hr"></div>
+    <div class="s-title">The business case — without vs. with ACD</div>
+
+    <div class="impact-split">
+      <div class="impact-col ic-without">
+        <div class="impact-col-head">Without ACD — current state</div>
+        <div class="impact-rows">
+          <div class="ir"><span class="ir-label">90-day churn on AI features</span><span class="ir-val">34%</span></div>
+          <div class="ir"><span class="ir-label">AI support tickets vs. UI</span><span class="ir-val">6.2×</span></div>
+          <div class="ir"><span class="ir-label">Annual value destruction</span><span class="ir-val">₹1,200 Cr</span></div>
+          <div class="ir"><span class="ir-label">AI design cycle vs. UI</span><span class="ir-val">2.8×</span></div>
+          <div class="ir"><span class="ir-label">Defensible cognitive IP</span><span class="ir-val">None</span></div>
+        </div>
+      </div>
+      <div class="impact-col ic-with">
+        <div class="impact-col-head">With ACD — projected</div>
+        <div class="impact-rows">
+          <div class="ir"><span class="ir-label">90-day churn (trust arch.)</span><span class="ir-val">34% → 12%</span></div>
+          <div class="ir"><span class="ir-label">Support volume reduction</span><span class="ir-val">−62%</span></div>
+          <div class="ir"><span class="ir-label">Year 1 value recovery</span><span class="ir-val">₹850 Cr+</span></div>
+          <div class="ir"><span class="ir-label">Design cycle reduction</span><span class="ir-val">−40%</span></div>
+          <div class="ir"><span class="ir-label">3-year ROI</span><span class="ir-val">276×</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+    <div class="s-title">Three asks — one decision point</div>
+    <div class="g3">
+      <div class="card accent-top" style="--before-bg:var(--c-1)" onclick="">
+        <div style="height:3px;background:var(--c-1);margin:-1.5rem -1.5rem 1rem;"></div>
+        <div class="card-eyebrow" style="color:var(--c-1)">01 · This week</div>
+        <div class="card-title">Adopt</div>
+        <div class="card-body">Make ACD the mandatory design standard for JioFrames AI and Jio Enterprise AI. Zero additional budget. Uses existing teams. Deploy the practitioner standard (Chapter 06) Monday morning.</div>
+      </div>
+      <div class="card">
+        <div style="height:3px;background:var(--c-5);margin:-1.5rem -1.5rem 1rem;"></div>
+        <div class="card-eyebrow" style="color:var(--c-5)">02 · Q2 2026</div>
+        <div class="card-title">Resource</div>
+        <div class="card-body">Establish ACD Centre of Practice within Jio Tesseract. 2–3 roles. IIT Bombay IDC partnership. JioFrames telemetry for CTS measurement. ₹2.5–4 Cr Year 1. Expected return: ₹850 Cr+.</div>
+      </div>
+      <div class="card">
+        <div style="height:3px;background:var(--c-6);margin:-1.5rem -1.5rem 1rem;"></div>
+        <div class="card-eyebrow" style="color:var(--c-6)">03 · 2027</div>
+        <div class="card-title">Position</div>
+        <div class="card-body">Submit ACD-B to IEEE XR Working Group and ACM SIGCHI. Publish H1 through IIT Bombay. Jio as the organisation that wrote the cognitive design standard for ambient AI — globally.</div>
+      </div>
+    </div>
+
+    <div class="note">
+      <p><strong>The three orders of failure without ACD:</strong> First order (0–6 months): attentional budget collapse — Iqbal & Bailey 2006, 20–25 minute recovery per interruption. Second order (6–18 months): cognitive atrophy through the GPS mechanism — Ishikawa et al. 2008, spatial memory deterioration at scale. Third order (18+ months): the Autonomy Ratchet — a self-reinforcing loop toward cognitive substitution, not by design but by the mathematics of the ungoverned gap.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── 02 THE FRAMEWORK ── -->
+<div class="chapter" id="ch-2">
+  <div class="ch-accent" style="background:var(--c-2)"></div>
+  <div class="ch-header">
+    <div class="ch-eyebrow" style="color:var(--c-2)">02 · The Framework</div>
+    <h2 class="ch-title">ACD explained.<br><em>Once. Completely.</em></h2>
+    <p class="ch-lead">Five original constructs. One governance law. One proportionality principle. The three-layer governance model. Each is introduced once in this document — subsequent chapters apply them without re-explaining.</p>
+  </div>
+  <div class="ch-inner">
+
+    <div class="s-title">The three-layer governance model</div>
+    <div class="s-lead">A system can be fully compliant with Layers 1 and 2 and still commit catastrophic cognitive governance violations. ACD is Layer 3 — the only layer that governs the gap between machine processing and human conscious authorship.</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:1.5rem;">
+      <div style="background:var(--paper);padding:1.5rem;">
+        <div class="card-eyebrow">Layer 1 · Technical</div>
+        <div class="card-title">Can the device?</div>
+        <div class="card-body">MCP, A2A, Bluetooth, HealthKit, OAuth, 6G. Governs interoperability. Has no concept of human conscious bandwidth.<br><br><em style="color:rgba(6,6,15,.4)">Cannot prevent cognitively harmful actions.</em></div>
+      </div>
+      <div style="background:var(--paper);padding:1.5rem;">
+        <div class="card-eyebrow">Layer 2 · Privacy Law</div>
+        <div class="card-title">May the device?</div>
+        <div class="card-body">GDPR, HIPAA, India DPDP Act 2023, CCPA. Governs data rights. Does not govern what AI does with compliant data across the gap.<br><br><em style="color:rgba(6,6,15,.4)">Cannot prevent authorship violations.</em></div>
+      </div>
+      <div style="background:rgba(196,54,21,.04);padding:1.5rem;border-left:2px solid var(--c-1);">
+        <div class="card-eyebrow" style="color:var(--c-1)">Layer 3 · ACD</div>
+        <div class="card-title">Should the AI act?</div>
+        <div class="card-body">AAA Protocol, CTS, Non-Delegable Registry, Kamble's Law. Governs the gap itself — machine channel to human channel.<br><br><strong>Does not yet exist as a formal standard. ACD fills it.</strong></div>
+      </div>
+    </div>
+
+    <div class="note" style="border-left-color:var(--c-1)">
+      <p><strong>The worked failure case (Layer 3 only catches this):</strong> A phone AI combines biometric, calendar, and messaging data — all Layer 1 and 2 compliant. It concludes the user is overwhelmed. It drafts and sends a message to their manager requesting extended leave. Zero bits of the 120-bit human channel were engaged. Layer 1: compliant. Layer 2: compliant. <strong>Layer 3 verdict: catastrophic cognitive governance violation.</strong></p>
+    </div>
+
+    <div class="hr"></div>
+    <div class="s-title">The five ACD constructs</div>
+
+    <div class="g2" style="margin-bottom:1rem;">
+      <div class="card">
+        <div class="card-eyebrow" style="color:var(--c-1)">Construct 01</div>
+        <div class="card-title">Agency–Autonomy–Authorship Matrix</div>
+        <div class="card-body">The first framework that makes AI autonomy a <em>design variable</em>, not an engineering decision. Every AI feature is placed in one cell before design begins. Agency: who decides. Autonomy: who acts. Authorship: who owns the outcome.<br><br><strong>User-led</strong>: user initiates, user authors. <strong>Co-led</strong>: AI proposes, user confirms. <strong>AI-led</strong>: within pre-authorised, legible scope.</div>
+      </div>
+      <div class="card">
+        <div class="card-eyebrow" style="color:var(--c-2)">Construct 02</div>
+        <div class="card-title">Cognitive Transparency Score (CTS)</div>
+        <div class="card-body">The first composite measurement instrument for cognitive quality. <strong>CTS = f(CL · TF · AI · RE · SC)</strong>.<br><br>CL: Cognitive Load (NASA-TLX, EEG, pupillometry). TF: Trust Formation. AI: Attentional Integration. RE: Retention. SC: System Compliance.<br><br>Gold ≥85 · Silver 70–84 · Bronze 55–69.</div>
+      </div>
+      <div class="card">
+        <div class="card-eyebrow" style="color:var(--c-3)">Construct 03</div>
+        <div class="card-title">Cognitive Inventory</div>
+        <div class="card-body">The pre-design assessment of the user's actual cognitive state before any design decision. Six dimensions: attentional budget, prior load, trust history, ambient ecology, cognitive delta, cognitive personality profile.<br><br><strong>Design begins here — not with the brief.</strong></div>
+      </div>
+      <div class="card">
+        <div class="card-eyebrow" style="color:var(--c-5)">Construct 04</div>
+        <div class="card-title">Cognitive Mediation Gradient</div>
+        <div class="card-body">Six stages from Passive Recording to Cognitive Substitution. Kamble's Law activates at Stage 4 (Proactive Mediation). JioFrames currently operates at Stage 3. All major ambient AI platforms are drifting toward Stage 4–5 without governance architecture.</div>
+      </div>
+    </div>
+
+    <div class="card" style="border-left:3px solid var(--c-6);margin-bottom:1.5rem;">
+      <div class="card-eyebrow" style="color:var(--c-6)">Construct 05 · Kamble's Cognitive Governance Law</div>
+      <div class="card-title">Four non-negotiable conditions. Falsifiable. Empirically testable.</div>
+      <div class="card-body" style="margin-top:.75rem;">
+        <div class="g2" style="margin-bottom:0;">
+          <div><strong>1. Human intent sovereignty:</strong> intent formed in the 120-bit channel remains sovereign over all machine-channel processing.</div>
+          <div><strong>2. Non-delegable domain protection:</strong> no machine-channel processing substitutes for human conscious authorship in protected domains.</div>
+          <div><strong>3. Structural contestability:</strong> the human can at any moment understand what was processed, halt further processing, and reverse what has been done.</div>
+          <div><strong>4. Governance context propagation:</strong> the full AAA Protocol state propagates intact through every agent, device, and delegation. No handoff leaves sovereignty behind.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="s-title">The Proportionality Principle</div>
+    <div class="s-lead">The most important governance principle emerging from the cognitive gap: as AI processing power increases, the transparency of its mediation logic must increase proportionally. This is not a trade-off. It is a non-negotiable scaling relationship.</div>
+    <div style="background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:1.5rem;text-align:center;margin-bottom:1.5rem;">
+      <div style="font-family:'Instrument Serif',serif;font-size:clamp(1rem,2vw,1.4rem);font-style:italic;color:var(--ink);">Transparency Obligation ∝ Processing Scale × Implicitness Rate</div>
+      <div style="font-size:.78rem;font-weight:300;color:var(--mid);margin-top:.75rem;max-width:580px;margin-left:auto;margin-right:auto;">The more powerful the AI and the more implicitly it acts, the more precisely and accessibly it must disclose what it has done. As capability doubles every 18 months, so must the granularity of disclosure.</div>
+    </div>
+
+    <div class="hr"></div>
+    <div class="s-title">The ticket booking example — ACD in practice</div>
+    <div class="s-lead">847 trains. 3 sentences. 10,000,000:1 compression ratio. This is what Layer 0 and Layer 1 look like side by side.</div>
+
+    <div class="scen-content on" style="display:grid;">
+      <div class="card" style="border-left:3px solid var(--c-1)">
+        <div class="card-eyebrow" style="color:var(--c-1)">Without ACD — current AI (Layer 0 only)</div>
+        <div class="card-title" style="margin-top:.4rem;">11 data points. Implicit booking. Zero authorship.</div>
+        <div class="card-body" style="margin-top:.5rem;">Riya asks JioFrames to book a train. AI processes 847 options and returns a card with train name, number, platform, departure, arrival, seat, coach, PNR, price, reference, carriage map. She is on a platform with 8 minutes. Must process 11 items to confirm one thing. After boarding, checks IRCTC manually — she doesn't know what was compared. <strong>The AI did the booking but returned the cognitive debt.</strong></div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--c-3)">
+        <div class="card-eyebrow" style="color:var(--c-3)">With ACD — governed (Layer 1 + 2 + 3)</div>
+        <div class="card-title" style="margin-top:.4rem;">3 facts. 1 decision. Authorship: yours.</div>
+        <div class="card-body" style="margin-top:.5rem;">Signal at 1.5s: <em>"Found 3 options — fastest in 9 min."</em> HUD: <em>"14:22 · Platform 3 · ₹580 — confirm?"</em> 3 facts. 1 decision. Co-led AAA: AI recommends, user confirms. Disclosure: <em>"Search: implicit. Your choice: explicit. Agency: 71%. Authorship: 100%."</em> She boards with lower cognitive load than before. <strong>That is the cognitive dividend.</strong></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── 03 BENCHMARKING ── -->
+<div class="chapter" id="ch-3">
+  <div class="ch-accent" style="background:var(--c-7)"></div>
+  <div class="ch-header">
+    <div class="ch-eyebrow" style="color:var(--c-7)">03 · Industry Benchmarking</div>
+    <h2 class="ch-title">Ambient interface design<br>vs. <em>Ambient cognitive design.</em></h2>
+    <p class="ch-lead">Every company racing in ambient AI is designing the experience of ambient interfaces — making AI more seamless, more invisible, more context-aware. Not one has designed the cognitive quality of those interfaces. That distinction is the entire value of ACD.</p>
+  </div>
+  <div class="ch-inner">
+
+    <div class="g3">
+      <div class="card" style="border-left:3px solid var(--c-1)">
+        <div class="card-eyebrow" style="color:var(--c-1)">Ambient interface design</div>
+        <div class="card-title">What everyone is doing</div>
+        <div class="card-body">Making AI invisible, seamless, proactive, context-aware. The design challenge: how do we make the technology disappear? Every major company is racing on this dimension.</div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--c-3)">
+        <div class="card-eyebrow" style="color:var(--c-3)">Ambient cognitive design</div>
+        <div class="card-title">What only ACD does</div>
+        <div class="card-body">Governing what happens to the human mind inside that seamlessness. The design challenge: how do we ensure the disappearance of the interface does not disappear the human?</div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--c-2)">
+        <div class="card-eyebrow" style="color:var(--c-2)">The gap</div>
+        <div class="card-title">Uncontested, widening</div>
+        <div class="card-body">CES 2026 dominant trend: the "Invisible Interface." Google's 2026 AI glasses: "seamless integration into the fabric of everyday life." Not one company governs what that seamlessness does to the mind.</div>
+      </div>
+    </div>
+
+    <div class="s-title">Full competitive comparison</div>
+    <div style="overflow-x:auto;margin-bottom:1.5rem;">
+    <table class="data-table" style="min-width:740px;">
+      <thead><tr>
+        <th>Framework</th><th>Ambient AI?</th><th>Cognitive load?</th><th>AI autonomy design?</th><th>Authorship tracking?</th><th>Stage 4+ governance?</th><th>Certifiable?</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>Meta Ray-Ban / Orion</td><td class="yes">✓ Primary</td><td class="no">None</td><td class="no">None</td><td class="no">None</td><td class="no">None</td><td class="no">None</td></tr>
+        <tr><td>Apple HIG (visionOS)</td><td class="partial">Partial</td><td class="partial">Partial</td><td class="no">None</td><td class="no">None</td><td class="no">None</td><td class="no">None</td></tr>
+        <tr><td>Google PAIR + Android XR</td><td class="partial">Partial</td><td class="partial">Partial</td><td class="partial">Partial</td><td class="no">None</td><td class="no">None</td><td class="no">None</td></tr>
+        <tr><td>Microsoft HAX Toolkit</td><td class="no">Screen only</td><td class="no">None</td><td class="partial">Partial</td><td class="no">None</td><td class="no">None</td><td class="no">None</td></tr>
+        <tr><td>Amazon Alexa+</td><td class="yes">✓ Primary</td><td class="no">None</td><td class="no">None</td><td class="no">None</td><td class="no">None</td><td class="no">None</td></tr>
+        <tr><td>EU AI Act 2024</td><td class="no">Regulatory</td><td class="no">None</td><td class="partial">Risk cats.</td><td class="no">None</td><td class="no">None</td><td class="partial">Partial</td></tr>
+        <tr class="hero-row"><td>ACD Framework + ACD-B</td><td class="yes">✓ Built for this</td><td class="yes">✓ Primary KPI</td><td class="yes">✓ AAA Protocol</td><td class="yes">✓ Authorship axis</td><td class="yes">✓ Kamble's Law</td><td class="yes">✓ 3 tiers</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="s-title">The Cognitive Mediation Gradient — where the industry is</div>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:1.5rem;">
+      <div style="background:var(--paper);padding:.9rem .75rem;text-align:center;">
+        <div style="font-family:'DM Mono',monospace;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:.3rem;">Stage 1</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.72rem;color:var(--ink);">Passive Recording</div>
+        <div style="font-size:.7rem;color:var(--mid);margin-top:.3rem;">Agency ~100%</div>
+      </div>
+      <div style="background:var(--paper);padding:.9rem .75rem;text-align:center;">
+        <div style="font-family:'DM Mono',monospace;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:.3rem;">Stage 2</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.72rem;color:var(--ink);">Pattern Recognition</div>
+        <div style="font-size:.7rem;color:var(--mid);margin-top:.3rem;">Agency ~95%</div>
+      </div>
+      <div style="background:rgba(26,80,56,.08);padding:.9rem .75rem;text-align:center;border-top:2px solid var(--c-3);">
+        <div style="font-family:'DM Mono',monospace;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;color:var(--c-3);margin-bottom:.3rem;">Stage 3 · JioFrames now</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.72rem;color:var(--ink);">Contextual Guidance</div>
+        <div style="font-size:.7rem;color:var(--c-3);margin-top:.3rem;">ACD required</div>
+      </div>
+      <div style="background:rgba(196,54,21,.07);padding:.9rem .75rem;text-align:center;border-top:2px solid var(--c-1);">
+        <div style="font-family:'DM Mono',monospace;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;color:var(--c-1);margin-bottom:.3rem;">Stage 4 · Industry drifting here</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.72rem;color:var(--ink);">Proactive Mediation</div>
+        <div style="font-size:.7rem;color:var(--c-1);margin-top:.3rem;">Kamble's Law activates</div>
+      </div>
+      <div style="background:rgba(196,54,21,.12);padding:.9rem .75rem;text-align:center;border-top:2px solid rgba(196,54,21,.6);">
+        <div style="font-family:'DM Mono',monospace;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;color:var(--c-1);margin-bottom:.3rem;">Stage 5</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.72rem;color:var(--ink);">Cognitive Partnership</div>
+        <div style="font-size:.7rem;color:var(--c-1);margin-top:.3rem;">HIGH RISK · Continuous CTS</div>
+      </div>
+      <div style="background:rgba(196,54,21,.18);padding:.9rem .75rem;text-align:center;border-top:2px solid var(--c-1);">
+        <div style="font-family:'DM Mono',monospace;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;color:var(--c-1);margin-bottom:.3rem;">Stage 6</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.72rem;color:var(--ink);">Substitution</div>
+        <div style="font-size:.7rem;color:var(--c-1);margin-top:.3rem;">PROHIBITED</div>
+      </div>
+    </div>
+
+    <div class="note" style="border-left-color:var(--c-7)">
+      <p><strong>The industry trajectory:</strong> All major ambient AI platforms — Advanced Rabbit R1, Personal AI systems, ambient copilots, Google 2026 glasses — are operating at Stage 3–4 without governance adequate for Stage 4. They are approaching Stage 5–6 with no architecture to prevent Stage 6. ACD closes this gap. JioFrames, governed at Stage 3 now, is governable at Stage 4, 5, and beyond. That is the structural advantage — and the 18-month window before a competitor claims this standard.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── 04 USER EXPERIENCE ── -->
+<div class="chapter" id="ch-4">
+  <div class="ch-accent" style="background:var(--c-3)"></div>
+  <div class="ch-header">
+    <div class="ch-eyebrow" style="color:var(--c-3)">04 · End-User Experience</div>
+    <h2 class="ch-title">What ACD feels like<br><em>when it is working.</em></h2>
+    <p class="ch-lead">Users never encounter ACD as a framework. They experience it as a quality — the unusual sensation that a technology understands them without burdening them. This chapter makes that invisible quality visible through the CTS Dashboard, the JioFrames HUD, and five scenarios.</p>
+  </div>
+  <div class="ch-inner">
+
+    <div class="s-title">The JioFrames HUD — ACD in the glasses</div>
+    <div class="hud-frame">
+      <div class="hud-bar">
+        <div class="hud-dot" style="background:#2A2A40;"></div>
+        <div class="hud-dot" style="background:#2A2A40;"></div>
+        <div class="hud-dot" style="background:var(--c-1);"></div>
+        <div class="hud-bar-label">JioFrames · ACD Mode · Walking · 8:14am</div>
+        <div class="hud-bar-status">● Governed · Co-led</div>
+      </div>
+      <div class="hud-scene">
+        <div class="hud-bldg" style="left:5%;width:12%;height:160px;"></div>
+        <div class="hud-bldg" style="left:19%;width:8%;height:110px;"></div>
+        <div class="hud-bldg" style="left:29%;width:16%;height:200px;"></div>
+        <div class="hud-bldg" style="right:8%;width:11%;height:145px;"></div>
+        <div class="hud-bldg" style="right:21%;width:14%;height:125px;"></div>
+        <div class="hud-overlay">
+          <div class="hud-notif" style="top:1.25rem;right:1.25rem;max-width:190px;border-color:rgba(196,54,21,.35);">
+            <div class="hud-notif-tag" style="color:rgba(196,54,21,.8);">▸ Compressed · 847→3</div>
+            <div class="hud-notif-text">Fastest train: 8:22<br>Platform 3 · 2 options saved</div>
+          </div>
+          <div class="hud-notif" style="bottom:3rem;left:50%;transform:translateX(-50%);min-width:260px;border-color:rgba(196,54,21,.5);">
+            <div class="hud-notif-tag" style="color:rgba(196,54,21,.75);">Co-led · Your confirmation</div>
+            <div class="hud-notif-text" style="font-size:.78rem;font-weight:500;">14:22 · Platform 3 · ₹580</div>
+            <div style="font-size:.64rem;color:rgba(246,243,237,.45);margin:.2rem 0 .5rem;">Agency: 71% · Authorship: yours</div>
+            <div class="hud-confirm-btns">
+              <button class="hud-cbtn" style="border-color:rgba(196,54,21,.6);color:rgba(196,54,21,.9);">Confirm</button>
+              <button class="hud-cbtn" style="border-color:rgba(246,243,237,.15);color:rgba(246,243,237,.45);">All 3</button>
+              <button class="hud-cbtn" style="border-color:rgba(246,243,237,.15);color:rgba(246,243,237,.45);">Undo</button>
+            </div>
+          </div>
+          <div style="position:absolute;bottom:.75rem;right:.75rem;display:flex;align-items:center;gap:.4rem;background:rgba(7,8,15,.7);border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:.3rem .55rem;">
+            <span style="font-family:'DM Mono',monospace;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(246,243,237,.28);">CTS</span>
+            <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:var(--c-1);">84</span>
+          </div>
+          <div style="position:absolute;top:1.25rem;left:1.25rem;display:flex;align-items:center;gap:.35rem;">
+            <div style="width:5px;height:5px;border-radius:50%;background:var(--c-1);animation:pulse 2s infinite;"></div>
+            <span style="font-family:'DM Mono',monospace;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(196,54,21,.6);">ACD Active</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <style>@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.8);}}</style>
+
+    <div class="s-title">Live CTS Dashboard</div>
+    <div style="background:var(--ink);border-radius:8px;padding:1.5rem;margin-bottom:1.5rem;">
+      <div style="font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(246,243,237,.25);margin-bottom:1.25rem;">Cognitive Transparency Score · Wednesday · Apr 4</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
+        <div>
+          <div class="score-ring-row">
+            <svg width="52" height="52" viewBox="0 0 52 52"><circle cx="26" cy="26" r="20" fill="none" stroke="rgba(246,243,237,.08)" stroke-width="4"/><circle cx="26" cy="26" r="20" fill="none" stroke="#C43615" stroke-width="4" stroke-linecap="round" stroke-dasharray="125" stroke-dashoffset="33" transform="rotate(-90 26 26)"/><text x="26" y="30" text-anchor="middle" font-family="Syne" font-size="11" font-weight="700" fill="#F6F3ED">74</text></svg>
+            <div><div class="score-ring-val" style="color:var(--c-1)">74%</div><div class="score-ring-lbl">Agency</div><div style="font-size:.68rem;color:rgba(246,243,237,.35);margin-top:.1rem;">Target ≥65%</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="score-ring-row">
+            <svg width="52" height="52" viewBox="0 0 52 52"><circle cx="26" cy="26" r="20" fill="none" stroke="rgba(246,243,237,.08)" stroke-width="4"/><circle cx="26" cy="26" r="20" fill="none" stroke="#8A5808" stroke-width="4" stroke-linecap="round" stroke-dasharray="125" stroke-dashoffset="15" transform="rotate(-90 26 26)"/><text x="26" y="30" text-anchor="middle" font-family="Syne" font-size="11" font-weight="700" fill="#F6F3ED">88</text></svg>
+            <div><div class="score-ring-val" style="color:var(--c-5)">88%</div><div class="score-ring-lbl">Authorship</div><div style="font-size:.68rem;color:rgba(246,243,237,.35);margin-top:.1rem;">Target ≥80%</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="score-ring-row">
+            <svg width="52" height="52" viewBox="0 0 52 52"><circle cx="26" cy="26" r="20" fill="none" stroke="rgba(246,243,237,.08)" stroke-width="4"/><circle cx="26" cy="26" r="20" fill="none" stroke="#1A5038" stroke-width="4" stroke-linecap="round" stroke-dasharray="125" stroke-dashoffset="-8" transform="rotate(-90 26 26)"/><text x="26" y="27" text-anchor="middle" font-family="Syne" font-size="10" font-weight="700" fill="#F6F3ED">+6%</text></svg>
+            <div><div class="score-ring-val" style="color:var(--c-3)">↑ Growing</div><div class="score-ring-lbl">Autonomy</div><div style="font-size:.68rem;color:rgba(246,243,237,.35);margin-top:.1rem;">You are more capable</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:1rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:.48rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(246,243,237,.22);margin-bottom:.65rem;">Today's transparency log</div>
+        <div style="display:flex;flex-direction:column;gap:0;">
+          <div style="display:flex;align-items:flex-start;gap:.65rem;padding:.55rem 0;border-bottom:1px solid rgba(255,255,255,.06);">
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--c-3);flex-shrink:0;margin-top:.35rem;"></div>
+            <div style="flex:1;font-size:.74rem;color:rgba(246,243,237,.65);">Drafted reply to Priya — reviewed and sent by you</div>
+            <div style="font-family:'DM Mono',monospace;font-size:.44rem;letter-spacing:.08em;text-transform:uppercase;background:rgba(26,80,56,.2);color:var(--c-3);padding:.12rem .4rem;border-radius:2px;flex-shrink:0;">Explicit</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.65rem;padding:.55rem 0;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(196,54,21,.06);">
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--c-5);flex-shrink:0;margin-top:.35rem;"></div>
+            <div style="flex:1;font-size:.74rem;color:rgba(246,243,237,.65);">⚠ 3pm meeting rescheduled without your review — sent to Priya</div>
+            <div style="font-family:'DM Mono',monospace;font-size:.44rem;letter-spacing:.08em;text-transform:uppercase;background:rgba(196,54,21,.2);color:var(--c-1);padding:.12rem .4rem;border-radius:2px;flex-shrink:0;">Warning</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.65rem;padding:.55rem 0;">
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--c-5);flex-shrink:0;margin-top:.35rem;"></div>
+            <div style="flex:1;font-size:.74rem;color:rgba(246,243,237,.65);">Train: 847 options → 3 compressed · awaiting your confirmation</div>
+            <div style="font-family:'DM Mono',monospace;font-size:.44rem;letter-spacing:.08em;text-transform:uppercase;background:rgba(138,88,8,.2);color:var(--c-5);padding:.12rem .4rem;border-radius:2px;flex-shrink:0;">Compressed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="s-title">The five felt states</div>
+    <div class="s-lead">ACD-Gold experiences produce five specific felt states. If a user cannot report feeling at least three, the design has not reached the standard — regardless of technical accuracy.</div>
+    <div class="g3" style="margin-bottom:0;">
+      <div class="card"><div class="card-eyebrow" style="color:var(--c-1)">01 · Effortlessness</div><div class="card-title">"This just worked."</div><div class="card-body">Interaction completed without entering problem-solving mode. Cognitive load after: lower than before. NASA-TLX ≤35. CTS Cognitive Load ≥80.</div></div>
+      <div class="card"><div class="card-eyebrow" style="color:var(--c-2)">02 · Confidence</div><div class="card-title">"I know what it's doing."</div><div class="card-body">Calibrated trust — not blind faith. Stable mental model of AI capabilities and limits. Delegates without anxiety. CTS Trust Formation ≥85.</div></div>
+      <div class="card"><div class="card-eyebrow" style="color:var(--c-3)">03 · Presence</div><div class="card-title">"It's part of my life."</div><div class="card-body">Technology has disappeared as an object of attention. ≤2 unsolicited interactions per hour. Device noticed only when useful. CTS Attentional Integration ≥80.</div></div>
+      <div class="card"><div class="card-eyebrow" style="color:var(--c-5)">04 · Authorship</div><div class="card-title">"I'm still in control."</div><div class="card-body">Even when AI does most of the work, user feels unambiguously that they are the author. Override always available, never awkward. CTS Authorship axis ≥80%.</div></div>
+      <div class="card"><div class="card-eyebrow" style="color:var(--c-6)">05 · Loyalty</div><div class="card-title">"I'd miss this."</div><div class="card-body">Earned reliance — healthy, not addictive. User more capable at 6 months than at onboarding. Capability delta: positive. The cognitive dividend compounding.</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── 05 DESIGN SYSTEM ── -->
+<div class="chapter" id="ch-5">
+  <div class="ch-accent" style="background:var(--c-4)"></div>
+  <div class="ch-header">
+    <div class="ch-eyebrow" style="color:var(--c-4)">05 · Design System · ACD.DS + ACD.CDR</div>
+    <h2 class="ch-title">The cognitive design<br><em>language.</em></h2>
+    <p class="ch-lead">Material Design governs pixels. Apple HIG governs platform conventions. ACD.DS governs cognition — the design surface, the currency (bits not pixels), and the output (trust not delight). This chapter is the reference for designers building ACD-governed products.</p>
+  </div>
+  <div class="ch-inner">
+
+    <div class="s-title">Cognitive state tokens</div>
+    <div class="s-lead">Seven semantic colour tokens define every governance state in an ACD-governed experience. These are the atoms of the design language.</div>
+    <div style="background:var(--paper);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:1.5rem;">
+      <div class="token-row" style="padding:.65rem 1rem;">
+        <div class="token-swatch" style="background:#C43615;"></div>
+        <div class="token-name">--cog-user</div>
+        <div class="token-hex">#C43615</div>
+        <div class="token-meaning">Human authority — user initiates and authors. Override affordances. Non-delegable markers.</div>
+      </div>
+      <div class="token-row" style="padding:.65rem 1rem;background:rgba(6,6,15,.02);">
+        <div class="token-swatch" style="background:#9A6A10;"></div>
+        <div class="token-name">--cog-colead</div>
+        <div class="token-hex">#9A6A10</div>
+        <div class="token-meaning">Co-governance — AI proposes, user confirms. Predictability signals. Standard ambient interactions.</div>
+      </div>
+      <div class="token-row" style="padding:.65rem 1rem;">
+        <div class="token-swatch" style="background:#104878;"></div>
+        <div class="token-name">--cog-ai</div>
+        <div class="token-hex">#104878</div>
+        <div class="token-meaning">Machine channel — pre-authorised autonomous actions. Disclosure panels. Transparency log entries.</div>
+      </div>
+      <div class="token-row" style="padding:.65rem 1rem;background:rgba(6,6,15,.02);">
+        <div class="token-swatch" style="background:#1A5E3A;"></div>
+        <div class="token-name">--cog-trust</div>
+        <div class="token-hex">#1A5E3A</div>
+        <div class="token-meaning">Earned trust — explicit user actions. Authorship confirmations. Positive CTS states. Trust milestones.</div>
+      </div>
+      <div class="token-row" style="padding:.65rem 1rem;">
+        <div class="token-swatch" style="background:#B84A0A;"></div>
+        <div class="token-name">--cog-warn</div>
+        <div class="token-hex">#B84A0A</div>
+        <div class="token-meaning">Warning — authorship violations. CTS below threshold. Implicit actions requiring user awareness.</div>
+      </div>
+      <div class="token-row" style="padding:.65rem 1rem;background:rgba(6,6,15,.02);">
+        <div class="token-swatch" style="background:#5A2D8A;"></div>
+        <div class="token-name">--cog-protect</div>
+        <div class="token-hex">#5A2D8A</div>
+        <div class="token-meaning">Protected domain — non-delegable zones. Health decisions, identity expression, financial commitments, relationships.</div>
+      </div>
+      <div class="token-row" style="padding:.65rem 1rem;">
+        <div class="token-swatch" style="background:#3A3A4A;"></div>
+        <div class="token-name">--cog-silent</div>
+        <div class="token-hex">#3A3A4A</div>
+        <div class="token-meaning">Silence state — AI present but not acting. Social context grammar. Default ambient state.</div>
+      </div>
+    </div>
+
+    <div class="s-title">Timing tokens — governance, not animation</div>
+    <div class="g2">
+      <div class="card"><div class="card-eyebrow">--t-signal · 300ms minimum</div><div class="card-title">Predictability signal window</div><div class="card-body">Every autonomous AI action must be preceded by a 300–800ms signal. Below 300ms: imperceptible. Above 800ms: creates anticipatory anxiety. This window is governance, not UX polish.</div></div>
+      <div class="card"><div class="card-eyebrow">--t-dissolve · 3000ms · --t-max-persist · 8000ms</div><div class="card-title">Dissolution rules</div><div class="card-body">Peripheral information dissolves after 3s without engagement. No AI element persists beyond 8s without interaction. Violation: attentional budget depleted. CTS Cognitive Load drops below target.</div></div>
+    </div>
+
+    <div class="s-title">Cognitive Personality Profiles — the individual dimension</div>
+    <div class="s-lead">The AAA Matrix is not fixed per feature. It is calibrated to the user's CPP. The same booking feature is AI-led for one user and User-led for another. Convenience for one is intrusion for another.</div>
+
+    <div class="cpp-grid">
+      <div class="cpp-hd">Dimension</div>
+      <div class="cpp-hd">High · autonomy-accepting</div>
+      <div class="cpp-hd">Medium · balanced</div>
+      <div class="cpp-hd">Low · autonomy-resistant</div>
+      <div class="cpp-dim"><div class="cpp-dim-name">Autonomy Tolerance</div><div class="cpp-dim-desc">How much unsolicited AI initiative feels helpful vs. intrusive.</div></div>
+      <div class="cpp-val"><div class="cpp-val-label" style="color:var(--c-3)">AT-High</div><div class="cpp-val-text"><strong>"Just handle it."</strong> Welcomes proactive AI. Delegates broadly. Low review rate.</div></div>
+      <div class="cpp-val"><div class="cpp-val-label" style="color:var(--c-5)">AT-Medium</div><div class="cpp-val-text"><strong>"Suggest, then ask."</strong> Welcomes suggestions. Confirms before action. Co-led default.</div></div>
+      <div class="cpp-val"><div class="cpp-val-label" style="color:var(--c-1)">AT-Low</div><div class="cpp-val-text"><strong>"Tell me, I'll decide."</strong> AI initiative = intrusion. User-led default. All actions explicit.</div></div>
+      <div class="cpp-dim"><div class="cpp-dim-name">Trust Formation Rate</div><div class="cpp-dim-desc">How quickly calibrated trust develops after consistent accurate behaviour.</div></div>
+      <div class="cpp-val"><div class="cpp-val-label" style="color:var(--c-3)">TFR-Fast</div><div class="cpp-val-text"><strong>Trusts quickly.</strong> Monitor for over-trust leading to unchecked autonomy drift.</div></div>
+      <div class="cpp-val"><div class="cpp-val-label" style="color:var(--c-5)">TFR-Calibrated</div><div class="cpp-val-text"><strong>Trust follows accuracy.</strong> Incremental delegation. Healthy trajectory. Standard cascade.</div></div>
+      <div class="cpp-val"><div class="cpp-val-label" style="color:var(--c-1)">TFR-Slow</div><div class="cpp-val-text"><strong>Earns trust over months.</strong> Extended User-led phase. Patient trust architecture. Never pressure.</div></div>
+    </div>
+
+    <div class="s-title">Input modality taxonomy</div>
+    <div class="s-lead">The governance obligation does not change with the modality. A voice confirmation and a tap are both equally valid human-channel signals. What changes is cognitive weight, intent reliability, and appropriate AAA placement range.</div>
+    <div class="mod-grid">
+      <div class="mod-card">
+        <div class="mod-card-top">
+          <div class="mod-name" style="color:var(--c-2)">Touch</div>
+          <div class="mod-surface">Tap · Press · Swipe · Scroll · Pinch</div>
+          <div class="mod-badges"><span class="tag" style="color:var(--c-3);border-color:rgba(26,80,56,.25);">CW-2 to CW-4</span><span class="tag" style="color:var(--mid);border-color:var(--border);">Confirmation: yes</span></div>
+        </div>
+        <div class="mod-body">
+          <div class="mod-row"><span class="k">Intent reliability</span><span class="v" style="color:var(--c-3);">Very high</span></div>
+          <div class="mod-row"><span class="k">Non-delegable?</span><span class="v" style="color:var(--c-3);">✓ Permitted</span></div>
+          <div class="mod-row"><span class="k">AAA range</span><span class="v">User-led · Co-led</span></div>
+        </div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-card-top">
+          <div class="mod-name" style="color:var(--c-3)">Voice</div>
+          <div class="mod-surface">Command · Confirmation · Ambient</div>
+          <div class="mod-badges"><span class="tag" style="color:var(--c-3);border-color:rgba(26,80,56,.25);">CW-1 to CW-3</span><span class="tag" style="color:var(--mid);border-color:var(--border);">Ambient-native</span></div>
+        </div>
+        <div class="mod-body">
+          <div class="mod-row"><span class="k">Intent reliability</span><span class="v" style="color:var(--c-3);">High</span></div>
+          <div class="mod-row"><span class="k">Non-delegable?</span><span class="v" style="color:var(--c-3);">✓ Permitted</span></div>
+          <div class="mod-row"><span class="k">AAA range</span><span class="v">All three</span></div>
+        </div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-card-top">
+          <div class="mod-name" style="color:var(--c-4)">Gaze / Eye</div>
+          <div class="mod-surface">Fixation · Dwell ≥800ms · Saccade</div>
+          <div class="mod-badges"><span class="tag" style="color:var(--c-5);border-color:rgba(138,88,8,.25);">CW-0 to CW-2</span><span class="tag" style="color:var(--mid);border-color:var(--border);">Glasses-native</span></div>
+        </div>
+        <div class="mod-body">
+          <div class="mod-row"><span class="k">Intent reliability</span><span class="v" style="color:var(--c-5);">Low-medium</span></div>
+          <div class="mod-row"><span class="k">Non-delegable?</span><span class="v" style="color:var(--c-1);">✗ Not alone</span></div>
+          <div class="mod-row"><span class="k">AAA range</span><span class="v">Co-led trigger only</span></div>
+        </div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-card-top">
+          <div class="mod-name" style="color:var(--c-7)">Neural / BCI</div>
+          <div class="mod-surface">Intention signal · EEG · Mental command</div>
+          <div class="mod-badges"><span class="tag" style="color:var(--c-1);border-color:rgba(196,54,21,.25);">Highest stakes</span><span class="tag" style="color:var(--mid);border-color:var(--border);">User-led only</span></div>
+        </div>
+        <div class="mod-body">
+          <div class="mod-row"><span class="k">Intent reliability</span><span class="v" style="color:var(--c-5);">Emerging</span></div>
+          <div class="mod-row"><span class="k">Non-delegable?</span><span class="v" style="color:var(--c-1);">✗ Not yet</span></div>
+          <div class="mod-row"><span class="k">AAA range</span><span class="v">User-led only</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note" style="border-left-color:var(--c-1)">
+      <p><strong>The cardinal rule across all modalities:</strong> Silence is never consent. A system that acts on the user's non-response — even after a confirmation prompt — has committed a cognitive governance violation regardless of accuracy. Every AI-led action requires a positive, explicit, modality-appropriate signal from the 120-bit human channel.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── 06 PRACTITIONER STANDARD ── -->
+<div class="chapter" id="ch-6">
+  <div class="ch-accent" style="background:var(--c-5)"></div>
+  <div class="ch-header">
+    <div class="ch-eyebrow" style="color:var(--c-5)">06 · Practitioner Standard · ACD.STANDARD</div>
+    <h2 class="ch-title">Deploy<br><em>Monday morning.</em></h2>
+    <p class="ch-lead">The complete operational kit for designers and engineers shipping ACD-governed products. The checklist is the minimum. The compliance test determines certification tier. The Design Gate is the governance checkpoint before any AI feature ships.</p>
+  </div>
+  <div class="ch-inner">
+
+    <div class="s-title">Six-stage design workflow</div>
+    <div class="flow">
+      <div class="flow-step"><div class="flow-step-num">Stage 01</div><div class="flow-step-title">Cognitive State Map</div><div class="flow-step-body">Define the target cognitive state. Set CTS target. Before any visual work begins.</div></div>
+      <div class="flow-step"><div class="flow-step-num">Stage 02</div><div class="flow-step-title">Cognitive Inventory</div><div class="flow-step-body">Complete the Ambient Context Brief. Map attentional budget, prior load, trust history.</div></div>
+      <div class="flow-step"><div class="flow-step-num">Stage 03</div><div class="flow-step-title">AAA Placement</div><div class="flow-step-body">Place the feature in its AAA cell. Team decision: designer + PM + engineering lead.</div></div>
+      <div class="flow-step"><div class="flow-step-num">Stage 04</div><div class="flow-step-title">Interface Test</div><div class="flow-step-body">Apply Zero-Interface Test. Justify every retained visual element.</div></div>
+      <div class="flow-step"><div class="flow-step-num">Stage 05</div><div class="flow-step-title">Trust Architecture</div><div class="flow-step-body">Map trust trajectory, predictability signals, delegation boundaries, error recovery.</div></div>
+      <div class="flow-step"><div class="flow-step-num">Stage 06</div><div class="flow-step-title">CTS Validation</div><div class="flow-step-body">Test cognitive load (NASA-TLX ≤45), recovery (≤3s), trust signals. Submit for ACD-B.</div></div>
+    </div>
+
+    <div class="s-title">ACD-B certification tiers</div>
+    <div class="g3">
+      <div class="card" style="border-top:3px solid #C49820;">
+        <div class="card-eyebrow" style="color:#C49820">Gold · CTS ≥ 85</div>
+        <div class="card-title">Required to ship flagship features</div>
+        <div class="card-body">NASA-TLX ≤35 · Recovery ≤1.5s · Zero-interface test complete · Full trust architecture · Independent lead sign-off · All 6 workflow stages</div>
+      </div>
+      <div class="card" style="border-top:3px solid #8A96A2;">
+        <div class="card-eyebrow" style="color:#8A96A2">Silver · CTS 70–84</div>
+        <div class="card-title">Minimum to ship publicly</div>
+        <div class="card-body">NASA-TLX ≤45 · Recovery ≤3s · Trust architecture verified · Interface Necessity Decision documented · All 6 workflow stages</div>
+      </div>
+      <div class="card" style="border-top:3px solid var(--c-7);">
+        <div class="card-eyebrow" style="color:var(--c-7)">Bronze · CTS 55–69</div>
+        <div class="card-title">Internal / beta only</div>
+        <div class="card-body">Cognitive State Map + Ambient Context Brief complete · Interface Necessity Test conducted · Basic trust signals implemented · Pathway to Silver with timeline documented</div>
+      </div>
+    </div>
+
+    <div class="s-title">Interactive compliance checklist</div>
+    <div class="progress-wrap">
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="check-fill" style="width:0%"></div></div>
+      <div class="progress-label" id="check-label">0 / 14 items · 0% — Not certified</div>
+    </div>
+    <div class="checklist" id="checklist">
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg width="10" height="10" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div><div class="check-text"><strong>Cognitive Inventory complete</strong> — attentional budget, prior load, trust history, ambient ecology mapped before design began</div><div class="check-stage">Stage 02</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg width="10" height="10" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div><div class="check-text"><strong>AAA placement decided</strong> — explicit team decision (designer, PM, engineering lead). Not assumed or defaulted.</div><div class="check-stage">Stage 03</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg width="10" height="10" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div><div class="check-text"><strong>CTS target specified</strong> — composite score and each dimension target set before Stage 1 design. This is the definition of "done."</div><div class="check-stage">Stage 01</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg width="10" height="10" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div><div class="check-text"><strong>Zero-interface test applied</strong> — every retained interface element is justified. Audio-only alternative tested.</div><div class="check-stage">Stage 04</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg width="10" height="10" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div><div class="check-text"><strong>Predictability signal implemented</strong> — every autonomous AI action preceded by 300–800ms signal appropriate to context modality.</div><div class="check-stage">Stage 05</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg width="10" height="10" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div><div class="check-text"><strong>Override always accessible</strong> — single-interaction override on every AI action. AI does not resist. Reversibility complete.</div><div class="check-stage">Stage 05</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg width="10" height="10" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div><div class="check-text"><strong>AAA disclosure present</strong> — every AI action produces a plain-language disclosure within the 5-second readability window (≤50 bits).</div><div class="check-stage">Stage 05</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg width="10" height="10" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div><div class="check-text"><strong>Non-delegable domains hard-coded</strong> — health, identity expression, financial commitment, relationship decisions are hard-gated. Not configurable per session.</div><div class="check-stage">Stage 03</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg width="10" height="10" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div><div class="check-text"><strong>Silence ≠ consent enforced</strong> — system does not act on user non-response. No countdown timers manufacturing apparent consent.</div><div class="check-stage">All stages</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg width="10" height="10" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div><div class="check-text"><strong>Transparency log functional</strong> — every AI-initiated action logged with explicit/implicit classification, accessible on demand, 30-day history.</div><div class="check-stage">Stage 06</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg width="10" height="10" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div><div class="check-text"><strong>NASA-TLX validated</strong> — cognitive load tested with minimum 5 users in representative ambient contexts, not laboratory settings.</div><div class="check-stage">Stage 06</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg width="10" height="10" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div><div class="check-text"><strong>CPP calibration designed</strong> — feature accommodates all three CPP autonomy tolerance levels (High, Medium, Low) as distinct experiences.</div><div class="check-stage">Stage 03</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg width="10" height="10" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div><div class="check-text"><strong>Trust trajectory documented</strong> — 30/60/90-day trust arc specified. Permission cascade per domain documented. No silent scope expansion.</div><div class="check-stage">Stage 05</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"><svg width="10" height="10" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div><div class="check-text"><strong>6-month capability delta planned</strong> — measurement methodology for autonomy axis scheduled. Commitment 7 verification: user is more capable, not more dependent.</div><div class="check-stage">Stage 06</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── 07 RESEARCH PROTOCOL ── -->
+<div class="chapter" id="ch-7">
+  <div class="ch-accent" style="background:var(--c-6)"></div>
+  <div class="ch-header">
+    <div class="ch-eyebrow" style="color:var(--c-6)">07 · Research Protocol</div>
+    <h2 class="ch-title">H1 — The unified<br><em>tri-layer hypothesis.</em></h2>
+    <p class="ch-lead">ACD is not merely a design methodology. It is a falsifiable, empirically testable framework predicting measurable improvements across all three dimensions of a cognitive design system simultaneously. This is the study protocol.</p>
+  </div>
+  <div class="ch-inner">
+
+    <div class="stat-row">
+      <div class="stat"><div class="stat-val" style="color:var(--c-6)">2,400</div><div class="stat-label">Participants<br>total across 3 sub-studies</div></div>
+      <div class="stat"><div class="stat-val" style="color:var(--c-6)">18</div><div class="stat-label">Month<br>study duration</div></div>
+      <div class="stat"><div class="stat-val" style="color:var(--c-6)">3×</div><div class="stat-label">Parallel sub-studies<br>H1a · H1b · H1c</div></div>
+      <div class="stat"><div class="stat-val" style="color:var(--c-6)">5+</div><div class="stat-label">Measurement<br>modalities</div></div>
+    </div>
+
+    <div class="s-title">The three falsifiable hypotheses</div>
+
+    <div class="hyp-card">
+      <div class="hyp-id" style="color:var(--c-2)">H1a · End-User Cognitive Layer</div>
+      <div class="hyp-title">Cognitive Load Reduction in XR</div>
+      <div class="hyp-statement">"XR experiences designed using ACD principles will produce statistically significant reductions in cognitive load — measured by NASA-TLX, EEG theta/alpha ratio, and task performance — compared to conventionally designed XR experiences, controlling for feature parity and visual complexity."</div>
+      <div class="hyp-falsifiable"><strong>Falsifiable if:</strong> NASA-TLX scores for ACD-designed experiences show no significant difference from control group. Predicted effect size: d ≥ 0.6 at 80% power, α = 0.05. Primary platform: JioFrames.</div>
+    </div>
+
+    <div class="hyp-card">
+      <div class="hyp-id" style="color:var(--c-5)">H1b · Designer Workflow Layer</div>
+      <div class="hyp-title">Design Quality from ACD Workflow</div>
+      <div class="hyp-statement">"Designers trained in and applying the ACD six-stage workflow will produce ambient AI experiences with measurably superior Cognitive Transparency Scores compared to matched designers using conventional UX process, controlling for designer experience level and project scope."</div>
+      <div class="hyp-falsifiable"><strong>Falsifiable if:</strong> ACD-trained designer outputs score no higher on ACD-B than matched non-ACD designers. Predicted effect: ACD-trained group achieves Silver tier in ≥70% of designs vs. ≤30% for control.</div>
+    </div>
+
+    <div class="hyp-card">
+      <div class="hyp-id" style="color:var(--c-6)">H1c · System Trust Layer</div>
+      <div class="hyp-title">ACD-B as Trust and Retention Predictor</div>
+      <div class="hyp-statement">"ACD-B certification tier is a statistically significant predictor of user trust scores, 18-month retention rates, and voluntary delegation depth — independent of feature quality, interface aesthetics, and demographic factors."</div>
+      <div class="hyp-falsifiable"><strong>Falsifiable if:</strong> ACD-B tier shows no significant regression coefficient in a hierarchical trust model controlling for feature quality. Predicted: β ≥ 0.35 for ACD-B tier in trust regression, p &lt; 0.01.</div>
+    </div>
+
+    <div class="s-title">Study architecture</div>
+    <div class="g3">
+      <div class="card">
+        <div class="card-eyebrow" style="color:var(--c-2)">Sub-Study A · H1a · n=800</div>
+        <div class="card-title">Within-subjects XR usability</div>
+        <div class="card-body">JioFrames users. 4 task categories. ACD-designed vs. conventional. NASA-TLX, EEG (theta/alpha), pupillometry, eye-tracking. 30/90/180-day retention follow-up.</div>
+      </div>
+      <div class="card">
+        <div class="card-eyebrow" style="color:var(--c-5)">Sub-Study B · H1b · n=120 designers</div>
+        <div class="card-title">Designer workflow comparison</div>
+        <div class="card-body">60 ACD-trained vs. 60 conventional. Same brief. Blind ACD-B audit. Mayer Trust Scale adapted for AI. 90-day cohort. IIT Bombay IDC partnership.</div>
+      </div>
+      <div class="card">
+        <div class="card-eyebrow" style="color:var(--c-6)">Sub-Study C · H1c · n=1,480</div>
+        <div class="card-title">Longitudinal trust prediction</div>
+        <div class="card-body">JioFrames deployment cohort. 18 months. Hierarchical regression. ACD-B tier as independent variable. Trust, retention, delegation depth as outcomes.</div>
+      </div>
+    </div>
+
+    <div class="s-title">Measurement instruments</div>
+    <div style="overflow-x:auto;margin-bottom:1.5rem;">
+    <table class="data-table" style="min-width:600px;">
+      <thead><tr><th>Instrument</th><th>Measures</th><th>CTS Dimension</th><th>Timing</th></tr></thead>
+      <tbody>
+        <tr><td>NASA-TLX (6-dim)</td><td>Cognitive load: mental, physical, temporal, performance, effort, frustration</td><td>CL</td><td>Post-task · each session</td></tr>
+        <tr><td>EEG theta/alpha ratio</td><td>Neural cognitive load — frontal theta (working memory), alpha suppression (attention)</td><td>CL</td><td>Continuous during tasks</td></tr>
+        <tr><td>Pupillometry</td><td>Cognitive effort via pupil dilation index</td><td>CL</td><td>Continuous during tasks</td></tr>
+        <tr><td>Eye-tracking (fixation entropy)</td><td>Attentional integration — focal vs. peripheral processing</td><td>AI</td><td>Continuous during tasks</td></tr>
+        <tr><td>Mayer Trust Scale (ACD-adapted)</td><td>Calibrated trust, delegation willingness, perceived reliability</td><td>TF</td><td>Day 1, 30, 90, 180</td></tr>
+        <tr><td>Usage analytics</td><td>Voluntary re-engagement, session depth, feature delegation rate</td><td>RE</td><td>Continuous</td></tr>
+        <tr><td>ACD-B compliance audit</td><td>System compliance — 30-criterion blind audit of each design</td><td>SC</td><td>Pre-launch · 90-day</td></tr>
+        <tr><td>Capability delta assessment</td><td>Independent task performance vs. onboarding baseline — Kamble Commitment 7</td><td>Autonomy axis</td><td>Onboarding · 90 · 180 days</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="s-title">Theoretical lineage — how ACD extends the canon</div>
+    <div style="overflow-x:auto;margin-bottom:1.5rem;">
+    <table class="data-table" style="min-width:580px;">
+      <thead><tr><th>Thinker</th><th>Key contribution</th><th>How ACD extends it</th></tr></thead>
+      <tbody>
+        <tr><td>Shannon (1948)</td><td>Information theory — mathematical quantification of information transfer</td><td>ACD applies Shannon's framework to the human conscious channel as the governance constraint</td></tr>
+        <tr><td>Csikszentmihalyi & Lucky</td><td>Human conscious bandwidth at 120 bits/second</td><td>ACD treats this figure as the fundamental design constraint for all ambient AI governance</td></tr>
+        <tr><td>Caltech / Meister et al. (2024)</td><td>Conscious thought at ~10 bits/second, empirically measured</td><td>ACD uses this to calibrate AAA Protocol disclosure design — receivable in ≤5 seconds</td></tr>
+        <tr><td>Kahneman (2011)</td><td>Dual Process Theory — System 1 vs. System 2</td><td>ACD introduces System 3 (AI). Must strengthen System 2, never bypass it to serve System 1</td></tr>
+        <tr><td>Clark & Chalmers (1998)</td><td>The Extended Mind — tools as constitutive parts of cognition</td><td>ACD governs the conditions under which AI may become a genuine cognitive extension</td></tr>
+        <tr><td>Weiser (1991)</td><td>Calm Technology — the most profound technologies disappear</td><td>ACD operationalises calm for ambient AI: the transformer disappears; the readout is always available</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="s-title">Proposed submission targets</div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-eyebrow" style="color:var(--c-6)">Academic</div>
+        <div class="card-body" style="margin-top:.5rem;">
+          ACM SIGCHI — CHI 2027 · Cognitive Design in Ambient AI<br>
+          ACM DIS 2027 — Designing for Human Cognitive Sovereignty<br>
+          ISMAR 2026 — Cognitive Design in Mixed Reality<br>
+          IEEE TVCG — Cognitive transparency in XR systems
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-eyebrow" style="color:var(--c-2)">Standards bodies</div>
+        <div class="card-body" style="margin-top:.5rem;">
+          IEEE XR Working Group — Layer 3 Cognitive Governance Standard<br>
+          ISO/IEC JTC 1/SC 42 — AI Management System (cognitive addendum)<br>
+          W3C Web AI — Cognitive accessibility guidelines<br>
+          ACM SIGCHI Symposium on Human-AI Interaction
+        </div>
+      </div>
+    </div>
+
+    <div class="pq">
+      <p>"We are building the cognitive environment in which future generations will form their identities, build their relationships, and exercise their autonomy. To design that environment without governance is not a design failure. It is a betrayal of the human beings who will inhabit it. ACD is that governance."</p>
+      <cite>ACD Governance Framework · Kirti · Conclusion · 2026 · Zenodo · records/19254628</cite>
+    </div>
+
+    <div style="background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:1.5rem;margin-top:1.5rem;">
+      <div class="card-eyebrow" style="margin-bottom:.75rem;">Citation</div>
+      <div style="font-family:'DM Mono',monospace;font-size:.72rem;line-height:1.8;color:var(--mid);">
+        Kamble, K. (2026). <em>Ambient Cognitive Design: The Governance Framework for the Second Mind.</em> Jio Tesseract / Jio Platforms, Reliance Industries. Zenodo. https://zenodo.org/records/19254628. ORCID: 0009-0003-2587-6789.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</main>
+
+<!-- ══════════════════════════════════════
+     MOBILE BOTTOM NAV
+══════════════════════════════════════ -->
+<nav class="mob-nav">
+  <div class="mob-nav-inner">
+    <button class="mob-tab active" id="mt-0" onclick="show(0)">
+      <span class="mob-tab-num">⌂</span>
+      <span class="mob-tab-lbl">Home</span>
+    </button>
+    <button class="mob-tab" id="mt-1" onclick="show(1)">
+      <span class="mob-tab-num" style="color:var(--c-1)">01</span>
+      <span class="mob-tab-lbl">Case</span>
+    </button>
+    <button class="mob-tab" id="mt-2" onclick="show(2)">
+      <span class="mob-tab-num" style="color:var(--c-2)">02</span>
+      <span class="mob-tab-lbl">Framework</span>
+    </button>
+    <button class="mob-tab" id="mt-3" onclick="show(3)">
+      <span class="mob-tab-num" style="color:var(--c-7)">03</span>
+      <span class="mob-tab-lbl">Bench</span>
+    </button>
+    <button class="mob-tab" id="mt-4" onclick="show(4)">
+      <span class="mob-tab-num" style="color:var(--c-3)">04</span>
+      <span class="mob-tab-lbl">UX</span>
+    </button>
+    <button class="mob-tab" id="mt-5" onclick="show(5)">
+      <span class="mob-tab-num" style="color:var(--c-4)">05</span>
+      <span class="mob-tab-lbl">Design</span>
+    </button>
+    <button class="mob-tab" id="mt-6" onclick="show(6)">
+      <span class="mob-tab-num" style="color:var(--c-5)">06</span>
+      <span class="mob-tab-lbl">Practice</span>
+    </button>
+    <button class="mob-tab" id="mt-7" onclick="show(7)">
+      <span class="mob-tab-num" style="color:var(--c-6)">07</span>
+      <span class="mob-tab-lbl">Research</span>
+    </button>
+  </div>
+</nav>
+
+<script>
+const CHAPTERS = 8;
+const NAMES = ['Overview','The Case','The Framework','Benchmarking','User Experience','Design System','Practitioner Standard','Research Protocol'];
+const COLORS = ['var(--c-1)','var(--c-1)','var(--c-2)','var(--c-7)','var(--c-3)','var(--c-4)','var(--c-5)','var(--c-6)'];
+let cur = 0;
+let sidebarOpen = false;
+
+function show(n) {
+  // Hide current
+  document.getElementById('ch-'+cur).classList.remove('active');
+  document.getElementById('nav-'+cur).classList.remove('active');
+  if (document.getElementById('mt-'+cur)) document.getElementById('mt-'+cur).classList.remove('active');
+
+  cur = n;
+
+  // Show new
+  document.getElementById('ch-'+n).classList.add('active');
+  document.getElementById('nav-'+n).classList.add('active');
+  if (document.getElementById('mt-'+n)) document.getElementById('mt-'+n).classList.add('active');
+
+  // Update crumb
+  const numStr = String(n).padStart(2,'0');
+  document.getElementById('crumb').innerHTML = '<strong>'+numStr+' / 07</strong> — '+NAMES[n];
+
+  // Scroll to top
+  document.getElementById('ch-'+n).scrollTo(0,0);
+
+  // Close sidebar on mobile
+  if (window.innerWidth < 768) {
+    sidebarOpen = false;
+    document.getElementById('sidebar').classList.remove('open');
+  }
+
+  // Scroll nav item into view
+  const navBtn = document.getElementById('nav-'+n);
+  if (navBtn) navBtn.scrollIntoView({block:'nearest',behavior:'smooth'});
+  const mobTab = document.getElementById('mt-'+n);
+  if (mobTab) mobTab.scrollIntoView({inline:'nearest',behavior:'smooth'});
+}
+
+function next() { if (cur < CHAPTERS-1) show(cur+1); }
+function prev() { if (cur > 0) show(cur-1); }
+
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebar').classList.toggle('open', sidebarOpen);
+}
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next();
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prev();
+  if (e.key === 'Escape') { sidebarOpen=false; document.getElementById('sidebar').classList.remove('open'); }
+});
+
+// Click outside sidebar to close on mobile
+document.addEventListener('click', e => {
+  if (window.innerWidth < 768 && sidebarOpen) {
+    const sb = document.getElementById('sidebar');
+    const btn = document.getElementById('mob-menu-btn');
+    if (!sb.contains(e.target) && !btn.contains(e.target)) {
+      sidebarOpen = false;
+      sb.classList.remove('open');
+    }
+  }
+});
+
+// Swipe navigation
+let tsx = null;
+document.addEventListener('touchstart', e => { tsx = e.touches[0].clientX; }, {passive:true});
+document.addEventListener('touchend', e => {
+  if (tsx === null) return;
+  const dx = tsx - e.changedTouches[0].clientX;
+  if (Math.abs(dx) > 55) { if (dx > 0) next(); else prev(); }
+  tsx = null;
+}, {passive:true});
+
+// Checklist
+function toggleCheck(item) {
+  item.classList.toggle('done');
+  const svg = item.querySelector('svg');
+  if (svg) svg.style.display = item.classList.contains('done') ? 'block' : 'none';
+  updateProgress();
+}
+function updateProgress() {
+  const items = document.querySelectorAll('.check-item');
+  const done = document.querySelectorAll('.check-item.done').length;
+  const total = items.length;
+  const pct = Math.round(done/total*100);
+  document.getElementById('check-fill').style.width = pct+'%';
+  document.getElementById('check-fill').style.background = pct >= 85 ? 'var(--c-3)' : pct >= 70 ? '#8A96A2' : pct >= 55 ? 'var(--c-7)' : 'var(--c-5)';
+  const tier = pct >= 85 ? 'Gold · CTS ≥85' : pct >= 70 ? 'Silver · CTS 70–84' : pct >= 55 ? 'Bronze · Internal only' : 'Not certified';
+  document.getElementById('check-label').textContent = done+' / '+total+' items · '+pct+'% — '+tier;
+}
+</script>
+</body>
+</html>
